@@ -1,0 +1,281 @@
+﻿@{
+    ViewBag.Title = "DrugDetails";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    
+}
+@using DMS.DAL
+@model DMS.DAL.Drug
+<br />
+<br />
+<div id="single-product">
+    <div class="container">
+
+        <div class="no-margin col-xs-12 col-sm-6 col-md-5 gallery-holder">
+            <div class="product-item-holder size-big single-product-gallery small-gallery">
+
+                <div id="owl-single-product">
+                    <div class="single-product-gallery-item" id="slide1">
+                        <a data-rel="prettyphoto" href="@Model.ImageUrl">
+                            <img class="img-responsive" alt="" src="@Model.ImageUrl" />
+
+                        </a>
+                    </div>
+                </div>
+                <!-- /.single-product-slider -->
+
+
+
+
+            </div>
+            <!-- /.single-product-gallery -->
+        </div>
+        <!-- /.gallery-holder -->
+        <div class="no-margin col-xs-12 col-sm-7 body-holder">
+            <div class="body">
+                @*  <div class="star-holder inline">
+                    <div class="star" data-score="4"></div>
+                </div>*@
+                <div class="availability">
+                    <label>Tình trạng:</label><span class="available">  còn hàng</span>
+                </div>
+                <div class="title"><a href="#">@Model.DrugName</a></div>
+                @*<div class="brand">Brand : @Model.DrugCompany.DrugCompanyName</div>*@
+
+
+                @*<div class="excerpt">
+
+                    <p style="text-align: justify"><span style="font-family: times new roman,times; font-size: 12pt"><strong><span style="color: rgb(255, 0, 0)">Quy c&aacute;ch:&nbsp;</span></strong></span></p>
+
+                    <p style="text-align: justify"><span style="font-family: times new roman,times; font-size: 12pt">Vỉ 10 vi&ecirc;n, hộp 3 vỉ</span></p>
+
+                    <p style="text-align: justify"><strong><span style="color: rgb(255, 0, 0); font-family: times new roman,times; font-size: 12pt">Th&agrave;nh phần:</span></strong></p>
+
+                    <p style="text-align: justify"><em><span style="font-family: times new roman,times; font-size: 12pt">Mỗi vi&ecirc;n n&eacute;n chứa:</span></em></p>
+
+                    <p><span style="font-size: medium"><span style="font-family: times new roman">Imidapril hydroclorid&nbsp; 10 mg</span></span></p>
+
+                    <p><span style="font-size: medium"><span style="font-family: times new roman">T&aacute; dược vừa đủ &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; 1 vi&ecirc;n</span></span></p>
+
+                </div>*@
+
+                <div class="prices">
+                    @*  <strong><span style="color: red; font-size: 12pt">Giá</span></strong>*@
+                    @if (Session["DrugStoreTypeID"] != null)
+                    {
+                        <div class="price-current">
+                            <div>@string.Format("{0:0,0 VND}", @ViewBag.BoxPrice * @ViewBag.ActualValue)/ Hộp</div>
+                            <div>@string.Format("{0:0,0 VND}", @ViewBag.PackagePrice * @ViewBag.ActualValue) /Thùng</div>
+                        </div>
+                        <div class="price-prev">
+                            <div style="color:red">@string.Format("{0:0,0 VND}", @ViewBag.BoxPrice)/ Hộp</div>
+                            <div style="color:red">@string.Format("{0:0,0 VND}", @ViewBag.PackagePrice) /Thùng</div>
+                        </div>
+                    }
+                    else
+                    {
+
+                        <div class="price-current">
+                            <div>@string.Format("{0:0,0 VND}", @ViewBag.BoxPrice)/ Hộp</div>
+                            <div>@string.Format("{0:0,0 VND}", @ViewBag.PackagePrice) /Thùng</div>
+                        </div>
+                    }
+
+                    @*<div class="price-current">
+                        /<select id="unit" style="border: none">
+                            <option>Thùng</option>
+                            <option>Hộp</option>
+                        </select>
+                    </div>*@
+                </div>
+                <div class="qnt-holder">
+                    <div class="le-quantity">
+                        <form>
+                            @*<a class="minus" href="#reduce" ></a>
+                            <input id="quantity" name="quantity" type="text" value="1"onchange="getQuantity()" />
+                            <a class="plus" href="#add" ></a>*@
+                            <input id="quantity" name="quantity"  type="text" value="1" class="item-quantity" data-id="@Model.DrugID" />
+                        </form>
+                    </div>
+                    @*<a id="add-to-cart" href="" class="le-button huge" >add to cart</a>*@
+                    @if (Session["User"] == null)
+                    {
+                        <a href="@Url.Action("LogIn", "Account")" type="button" class="le-button huge">Thêm vào giỏ hàng</a>
+                    }
+                    else
+                    {
+                        var account = (Account)Session["User"];
+                        if (account.RoleID == 4 && account.IsPending == false)
+                        {
+                        <input id="add-to-cart" type="button" class="le-button huge" value="Thêm vào giỏ hàng" />
+                        }
+                        else
+                        {
+                        <a href="@Url.Action("Error", "Account")" type="button" class="le-button huge">Thêm vào giỏ hàng</a>
+                        }
+                    }
+
+                </div>
+                <script type="text/javascript">
+                    $("#add-to-cart").click(function () {
+                        // Get the id from the link 
+                        var recordToUpdate = $('#quantity').attr("data-id");
+                        var countToUpdate = $('#quantity').val();
+                        var totalPrice = parseFloat($('.total-price').first('span').text().split(",").join(""));
+                        //alert('You just add successful items in your Cart.');
+                        if (recordToUpdate != '') {
+                            $.ajax({
+                                url: '/ShoppingCart/AddToCart',
+                                method: 'POST',
+                                data: { "id": recordToUpdate, "quantity": countToUpdate }
+                            }).done(function (data) {
+                                //alert('You just add successful ' + data.Quantity + '"' + data.DrugName + '" in your Cart.');
+                                var quantity = parseInt($(".basket-item-count").find("span").text());
+                                quantity = quantity + parseInt(countToUpdate);
+                                totalPrice = parseFloat(data.Price) * parseInt(countToUpdate) *@ViewBag.ActualValue +totalPrice;
+                                $('.total-price').first('span').text(accounting.formatMoney(totalPrice, " ", 0) + " VND" + " VND");
+                                $(".basket-item-count").find("span").text(quantity);
+                            }).fail(function (xhr) {
+                                alert('The item can not add to your cart ! Please try again');
+                            });
+                        }
+                    });
+                    $("#unit").click(function () {
+                        // Get the id from the link 
+                        var recordToUpdate = $('#quantity').attr("data-id");
+                        var countToUpdate = $('#quantity').val();
+                        var totalPrice = parseFloat($('.total-price').first('span').text());
+                    });
+                </script>
+                <!-- /.qnt-holder -->
+            </div>
+            <!-- /.body -->
+
+        </div>
+        <!-- /.body-holder -->
+    </div>
+    <!-- /.container -->
+</div>
+<!-- /.single-product -->
+
+<!-- ========================================= SINGLE PRODUCT TAB ========================================= -->
+<section id="single-product-tab">
+    <div class="container">
+        <div class="tab-holder">
+            <ul class="nav nav-tabs simple">
+                <li class="active"><a href="#description" data-toggle="tab">Chi tiết</a></li>
+                @*<li><a href="#additional-info" data-toggle="tab">Additional Information</a></li>
+                <li><a href="#additional-info" data-toggle="tab">Directions</a></li>*@
+            </ul>
+            <!-- /.nav-tabs -->
+
+            <div class="tab-content">
+                <div class="tab-pane active" id="description">
+                    <div>@Html.Raw(@Model.Description)</div>
+
+                    <div class="meta-row">
+                        @*<div class="inline">
+                            <label>SKU:</label>
+                            <span>54687621</span>
+                        </div>
+                        <!-- /.inline -->
+
+                        <span class="seperator">/</span>*@
+
+                        <div class="inline">
+                            <label>Loại thuốc:</label>
+                            <span><a href="#">@Model.DrugType.DrugTypeName</a></span>
+                            @*<span><a href="#">gaming</a>,</span>
+                            <span><a href="#">desktop PC</a></span>*@
+                        </div>
+                        <!-- /.inline -->
+
+                        @* <span class="seperator">/</span>
+
+                        <div class="inline">
+                            <label>tag:</label>
+                            <span><a href="#">fast</a>,</span>
+                            <span><a href="#">gaming</a>,</span>
+                            <span><a href="#">strong</a></span>
+                        </div>*@
+                        <!-- /.inline -->
+                        <!-- /.inline -->
+                    </div>
+                    <!-- /.meta-row -->
+                </div>
+                <!-- /.tab-pane #description -->
+                <div class="tab-pane" id="additional-info">
+                    <ul class="tabled-data">
+                        <li>
+                            <label>weight</label>
+                            <div class="value">7.25 kg</div>
+                        </li>
+                        <li>
+                            <label>dimensions</label>
+                            <div class="value">90x60x90 cm</div>
+                        </li>
+                        <li>
+                            <label>size</label>
+                            <div class="value">one size fits all</div>
+                        </li>
+                        <li>
+                            <label>color</label>
+                            <div class="value">white</div>
+                        </li>
+                        <li>
+                            <label>guarantee</label>
+                            <div class="value">5 years</div>
+                        </li>
+                    </ul>
+                    <!-- /.tabled-data -->
+
+                    <div class="meta-row">
+                        @*<div class="inline">
+                            <label>SKU:</label>
+                            <span>54687621</span>
+                        </div>
+                        <!-- /.inline -->
+
+                        <span class="seperator">/</span>*@
+
+                        <div class="inline">
+                            <label>Loại thuốc:</label>
+                            <span><a href="#">@Model.DrugType.DrugTypeName</a>,</span>
+                            @*<span><a href="#">gaming</a>,</span>
+                            <span><a href="#">desktop PC</a></span>*@
+                        </div>
+                        <!-- /.inline -->
+
+                        @* <span class="seperator">/</span>
+
+                        <div class="inline">
+                            <label>tag:</label>
+                            <span><a href="#">fast</a>,</span>
+                            <span><a href="#">gaming</a>,</span>
+                            <span><a href="#">strong</a></span>
+                        </div>*@
+                        <!-- /.inline -->
+                    </div>
+                    <!-- /.meta-row -->
+                </div>
+                <!-- /.tab-pane #additional-info -->
+            </div>
+            <!-- /.tab-content -->
+
+        </div>
+        <!-- /.tab-holder -->
+    </div>
+    <!-- /.container -->
+</section>
+<!-- /#single-product-tab -->
+<!-- ========================================= SINGLE PRODUCT TAB : END ========================================= -->
+@{
+    int i = 0;
+}
+<script>
+    @*  function getQuantity() {
+        var text = $("#quantity").val();
+        $("#addto-cart").attr("href", "/ShoppingCart/AddToCart?id=@Model.drugId&quantity=" + text);
+    }*@
+</script>
+
+

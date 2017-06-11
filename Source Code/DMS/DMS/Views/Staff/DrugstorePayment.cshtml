@@ -1,0 +1,194 @@
+﻿
+@model IEnumerable<DMS.DAL.Payment>
+<div class="table-responsive">
+    <table class="table display KeyTable dataTable" aria-describedby="example_info">
+        <tbody id="tableDS" data-id="@ViewBag.DrugstoreID">
+            <tr>
+                <td>
+                    <strong>Số dư hiện tại:</strong>
+                </td>
+                <td>
+                    <label id="debt"></label>
+                    VND         
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <strong>Số tiền giao dịch:</strong>
+                </td>
+                <td>
+                    <input type="number" min="1" max="999999999" id="amount" required="required" />
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <strong>Số dư còn lại</strong>
+                </td>
+                <td>
+                    <label id="current-debt"></label>
+                    VND         
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <strong>Người giao dịch:</strong>
+                </td>
+                <td>
+                    <input type="text" maxlength="200" id="name" required="required" />
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <strong>Số điện thoại:</strong>
+                </td>
+                <td>
+                    <input type="text" maxlength="13"id="phone-number" required="required" />
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <strong>Loại giao dịch:</strong>
+                </td>
+                <td>
+                    <select id="paymentType">
+                        <option value="1">Thanh toán</option>
+                        <option value="2">Mua Hàng</option>
+                    </select>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+
+</div>
+<p>
+    <input type="submit" class="btn btn-primary" value="Lưu" onclick="Payment()" />
+</p>
+
+<h4>Lịch sử giao dịch</h4>
+ <table class="table display Keytable dataTable" id="tablePayment">
+                            <thead>
+                                <th>Stt</th>
+                                <th>Số tiền giao dịch</th>
+                                <th style="width: 100px">Loại giao dịch</th>
+                                <th>Số dư</th>
+                                <th style="width: 150px">Người giao dịch</th>
+                                <th>Số điện thoại</th>
+                                <th>Ngày</th>
+                            </thead>
+                            <tbody>
+                                @{
+    int index = 0;
+    for (int i = Model.Count() - 1; i >= 0; i--)
+    {
+        index++;
+        if (Model.ElementAt(i).PaymentType == true)
+        {
+                                    <tr>
+                                        @*<td>@Model.ElementAt(i).PaymentID</td>*@
+                                        <td>@index</td>
+                                        <td>
+                                            <label style="margin-left: 10px; color: red"> @String.Format("{0:0,0}", @Model.ElementAt(i).Amount) VND</label>
+                                        </td>
+                                        <td style="color: red;font-weight:bold 100">Mua Hàng</td>
+                                        <td>
+                                            <label style="margin-left: 10px; color: red"> @String.Format("{0:0,0}", @Model.ElementAt(i).Balance) VND</label>
+                                        </td>
+                                        <td>@Model.ElementAt(i).FullName</td>
+                                        <td>@Model.ElementAt(i).PhoneNumber</td>
+                                        <td>@Model.ElementAt(i).Date.ToString("yyyy/MM/dd")</td>
+                                    </tr>
+        }
+        else
+        {
+                                    <tr>
+                                        <td>@Model.ElementAt(i).PaymentID</td>
+                                        <td>
+                                            <label style="margin-left: 10px; color: blue">@String.Format("{0:0,0}", @Model.ElementAt(i).Amount) VND</label>
+                                        </td>
+                                        <td style="color: blue;font-weight:bold">Thanh Toán</td>
+                                        <td>
+                                            <label style="margin-left: 10px; color: red">@String.Format("{0:0,0}", @Model.ElementAt(i).Balance) VND</label>
+                                        </td>
+                                        <td>@Model.ElementAt(i).FullName</td>
+                                        <td>@Model.ElementAt(i).PhoneNumber</td>
+                                        <td>@Model.ElementAt(i).Date.ToString("yyyy/MM/dd")</td>
+                                    </tr>
+        }
+
+    }
+                                }
+                            </tbody>
+                        </table>
+<script type="text/javascript">
+    window.onload = GetDebt();
+    $(document).ready(function() {
+        $("#amount").on("change", function () {
+            var current = 0;
+            if ($("#paymentType").val()==2) {
+                current = accounting.unformat($("#debt").text()) - accounting.unformat($("#amount").val());
+            } else {
+                current = accounting.unformat($("#debt").text()) + accounting.unformat($("#amount").val());
+            }
+            document.getElementById('current-debt').textContent = accounting.formatMoney(current, " ", 0);
+        });
+        $("#paymentType").on("change", function () {
+            $("#amount").val(0);
+            GetDebt();
+        });
+        
+        var table = $('#tablePayment').dataTable({
+            "oLanguage": {
+                "sSearch": "Tìm kiếm:",
+                "sLengthMenu": "Hiển thị _MENU_ thanh toán",
+                "sInfoEmpty": "Không có dữ liệu",
+                "sZeroRecords": "Không có dữ liệu",
+                "sEmptyTable": "Không có dữ liệu",
+                "sInfo": "Hiển thị _START_ đến _END_ trên _TOTAL_ thanh toán",
+                "oAria": {
+                    "sSortDescending": "+",
+                    "sSortAscending": "-",
+                },
+                "oPaginate": {
+                    "sNext": "Trang sau",
+                    "sPrevious": "Trang trước"
+                },
+            }, "order": [[0, "asc"]]
+        });
+    });
+    function Payment() {
+        var DrugstoreID = $("#tableDS").attr("data-id");
+        var Amount = document.getElementById('amount').value;
+        var element = document.getElementById("paymentType");
+        var PaymentType = element.options[element.selectedIndex].value;
+        var name = $("#name").val();
+        var phoneNumber = $("#phone-number").val();
+        if (Amount < 0 || Amount=="") {
+            alert("Xin hãy nhập số tiền thanh toán !");
+        } else {
+            $.ajax({
+                url: '/Staff/Payment',
+                method: 'POST',
+                data: { "amount": Amount, "DrugstoreID": DrugstoreID, "paymentType": PaymentType,"name":name,"phoneNumber":phoneNumber },
+                success: function (result) {
+                    document.getElementById('amount').value = "";
+                    GetDebt();
+                    window.location.href = "/Staff/DrugstoreDetails/" + DrugstoreID;
+                }
+            });
+        }
+      //  GetDebt();
+    }
+    function GetDebt() {
+        var DrugstoreID = $("#tableDS").attr("data-id");
+        $.ajax({
+            url: '/Staff/GetDebt',
+            method: 'POST',
+            data: { "DrugstoreID": DrugstoreID },
+            success: function (result) {
+                document.getElementById('debt').textContent = accounting.formatMoney(result, " ", 0);
+                document.getElementById('current-debt').textContent = accounting.formatMoney(result, " ", 0);
+            }
+        });
+    }
+</script>

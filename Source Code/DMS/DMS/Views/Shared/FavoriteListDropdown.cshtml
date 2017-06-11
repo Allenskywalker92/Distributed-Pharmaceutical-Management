@@ -1,0 +1,13 @@
+﻿
+<li class="dropdown menu-item">
+    <a href="#" class="dropdown-toggle" data-toggle="dropdown">Danh sách sản phẩm yêu thích</a>
+    <ul class="dropdown-menu mega-menu">
+        @for (int i = 0; i < UPPER; i++)
+        {
+            <li><a href="@Url.Action("ListDetails", "FavoriteList")">Blog Post</a></li>
+            <li><a href="#">FAQ</a></li>
+            <li><a href="#">Terms &amp; Conditionszzzzzzzzzzzzzzzzzzzzzzzz</a></li>
+            <li><a href="#">Login/Register</a></li>         
+                                    }
+    </ul>
+</li>

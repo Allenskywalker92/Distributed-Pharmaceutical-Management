@@ -1,0 +1,5 @@
+﻿body {
+}
+tbody.odd tr {
+    background-color: silver;
+}

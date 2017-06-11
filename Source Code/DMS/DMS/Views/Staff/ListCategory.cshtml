@@ -1,0 +1,59 @@
+﻿@model IEnumerable<DMS.DAL.DrugType>
+@{
+    ViewBag.Title = "Danh sách loại thuốc";
+    Layout = "~/Views/Staff/_LayoutStaff.cshtml";
+}
+
+
+<div class="row">
+    <div class="col-lg-8">
+        <div class="panel panel-primary">
+            <div class="panel-heading">
+                @ViewBag.Title
+            </div>
+            <div class="panel-body">
+                <p>
+                    <a href="@Url.Action("CreateCategory", "Staff")" class="btn btn-primary">Tạo mới</a>
+                    @*@Html.ActionLink("Tạo mới", "CreateCategory")*@
+                </p>
+                <div class="table-responsive">
+                    <table class="table display dataTable" id="TableCategory" aria-describedby="example_info">
+                        <thead>
+                            <tr>
+                                <th>Tên loại thuốc
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model)
+                            {
+                                <tr>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.DrugTypeName)
+                                    </td>
+                                    <td>
+                                        @Html.ActionLink("Sửa", "EditCategory", new { id = item.DrugTypeID },new{@class="btn btn-primary"}) 
+                                        @Html.ActionLink("Xoá", "DeleteCategory", new { id = item.DrugTypeID },new{@class="btn btn-danger"})
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+
+                    @*<button onclick="myFunction()">Print this page</button>*@
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    $(document).ready(function () {
+        var table = $('#TableCategory').DataTable();
+
+        new $.fn.dataTable.AutoFill(table);
+    });
+
+    //function myFunction() {
+    //    window.print();
+    //}
+</script>

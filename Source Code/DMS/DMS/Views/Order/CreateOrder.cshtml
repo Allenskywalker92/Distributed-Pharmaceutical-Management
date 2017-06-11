@@ -1,0 +1,21 @@
+﻿@using DMS.DAL
+@{
+    ViewBag.Title = "CreateOrder";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<section id="cart-page">
+    <div class="container">
+        <div class="col-xs-12 col-md-3"> </div>
+        <div id="item-content" class="col-xs-12 col-md-5 items-holder no-margin" >
+            <div class="panel panel-primary">
+                <div class="panel-heading">Thông báo</div>
+                <div class="panel-body">
+                    <p style="padding-top: 20px;padding-bottom: 20px;font-size: large">Đơn hàng của bạn đã đặt thành công !<br/>
+                        Nhấn vào <a href="@Url.Action("Index","Home")">đây</a> để về lại trang chủ.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+    </section>

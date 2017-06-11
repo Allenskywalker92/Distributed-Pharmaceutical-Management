@@ -1,0 +1,60 @@
+﻿@using System.Collections
+@{
+    ViewBag.Title = "OrderHistory";
+}
+@model IEnumerable<DMS.DAL.DrugOrder>
+
+
+<table class="table display Keytable dataTable" aria-describedby="example_info">
+    <thead>
+        <tr>
+            <th>Stt</th>
+            <th>Nội dung</th>
+            <th>Ngày đặt</th>
+            <th>Trạng thái</th>
+            <th>Giá tiền</th>
+        </tr>
+    </thead>
+    <tbody>
+
+        @if (Model != null)
+        {
+            foreach (var item in Model.Reverse())
+            {
+            <tr>
+                <td>@item.DrugOrderID<br />
+                    @*<a href="@Url.Action("OrderDetails", "Order", new { orderID = item.DrugOrderID })">Xem đơn hàng</a>*@
+                </td>
+                <td>
+                    @foreach (var orderDetail in item.DrugOrderDetails)
+                    {
+                        @orderDetail.Drug.DrugName<br />
+                    }
+                </td>
+                <td>@item.DateOrder.Value.ToString("dd-MM-yyyy")</td>
+                @*<td>@item.IsActive</td>*@
+                <td id="status-@item.DrugOrderID">
+                    @if (item.Status == 1 || item.Status == 2)
+                    {
+                        <p>Chưa được xử lý</p>
+                    }
+                    else if (item.Status == 5)
+                    {
+                        <p style='color:red'>Đã hủy</p>
+                    }
+                    else if (item.Status == 3)
+                    {
+                        <p>Đang được xử lý</p>
+                    }
+                    else
+                    {
+                        <p>Hoàn thành</p>
+                    }
+            </td>
+
+                <td>@item.TotalPrice VND</td>
+            </tr>
+            }
+        }
+    </tbody>
+</table>

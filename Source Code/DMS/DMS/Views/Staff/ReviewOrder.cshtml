@@ -1,0 +1,244 @@
+﻿@using System.Globalization
+@using DMS.DAL
+@model DMS.DAL.DrugOrder
+@{
+    ViewBag.Title = "OrderDetails";
+    //Layout = "~/Views/Shared/_Layout.cshtml";
+    Layout = "~/Views/Staff/_LayoutStaff.cshtml";
+}
+
+@{
+    //var user = (Account)Session["User"];
+    <section id="checkout-page">
+        <div class="container">
+            <div class="col-xs-10 no-margin">
+                <section id="your-order">
+                    <h2 class="border h1">Thông tin đơn hàng</h2>
+                    <!-- /.billing-address -->
+                    <div id="total-area" class="row no-margin">
+                        <div class="col-xs-12 col-lg-8 col-lg-offset-4 no-margin-left">
+                            <div class="billing-address">
+
+                                <form>
+                                    <div class="row field-row">
+                                        <div class="col-xs-12 col-sm-6">
+                                            <label>tên và họ</label>
+                                            <input class="le-input" value="@Model.Drugstore.Account.AccountProfile.FullName">
+                                        </div>
+                                    </div>
+                                    <!-- /.field-row -->
+                                    <div class="row field-row">
+                                        <div class="col-xs-12 col-sm-4">
+                                            <label>số điện thoại </label>
+                                            <input class="le-input" value="@Model.Drugstore.Account.AccountProfile.Phone">
+                                        </div>
+                                        @*<div class="col-xs-12 col-sm-4">
+                                                <label>địa chỉ email</label>
+                                                <input class="le-input" value="@user.AccountProfile.Email">
+                                            </div>*@
+
+                                        @*<div class="col-xs-12 col-sm-4">
+                                                <label></label>
+                                                <input class="le-input" >
+                                            </div>*@
+                                    </div>
+                                    <!-- /.field-row -->
+                                    <div class="row field-row">
+                                        <div class="col-xs-12 col-sm-6">
+                                            <label>tên nhà thuốc</label>
+                                            <input class="le-input" value="@Model.Drugstore.DrugstoreName" disabled="">
+                                        </div>
+                                    </div>
+                                    <!-- /.field-row -->
+                                    <div class="row field-row">
+                                        <div class="col-xs-12 col-sm-6">
+                                            <label>địa chỉ giao hàng</label>
+                                            <input class="le-input" data-placeholder="địa chỉ" value="@Model.Drugstore.Address" disabled="">
+                                        </div>
+                                    </div>
+                                    <!-- /.field-row -->
+                                    <div class="row field-row">
+                                        <div class="col-xs-12 col-sm-6">
+                                            <label>Ghi chú</label>
+                                            <input class="le-input" disabled="" value="@Model.Note" aria-multiline="">
+                                        </div>
+                                    </div>
+                                    <!-- /.field-row -->
+                                </form>
+
+                            </div>
+                        </div>
+                        <div class="col-xs-12 col-lg-4  no-margin-right">
+                            <div id="subtotal-holder">
+                                <ul class="tabled-data inverse-bold no-border">
+                                    <li>
+                                        <label>Tổng cộng đơn hàng:</label>
+                                        <div class="value"> <spans id="value">@String.Format("{0:0,0}", Model.TotalPrice)</spans> VND</div>
+                                    </li>
+                                    <li>
+                                        <label>Giao hàng:</label>
+                                        <div class="value">
+                                            <div class="radio-group">
+                                                <input checked class="le-radio" type="radio" name="group1" value="free">
+                                                <div class="radio-label bold">Miễn phí</div>
+                                                <br>
+                                            </div>
+                                        </div>
+                                    </li>
+                                </ul>
+                                <!-- /.tabled-data -->
+
+                                <ul id="total-field" class="tabled-data inverse-bold ">
+                                    <li>
+                                        <label>Tổng cộng tất cả:</label>
+                                        <div class="value"><span id="total-value">@String.Format("{0:0,0}", Model.TotalPrice)</span> VND</div>
+                                    </li>
+                                </ul>
+                                <!-- /.tabled-data -->
+                            </div>
+                            <!-- /#subtotal-holder -->
+                            <div class="place-order-button">
+                                <a href="@Url.Action("ApproveOrder", "Staff",new {id=Model.DrugOrderID})" class="le-button big">xác nhận</a>
+                                <a href="@Url.Action("CancelOrder", "Staff", new { id = Model.DrugOrderID })" style="background-color: red;" class="le-button big">Hủy bỏ</a>
+                                @*<a href="@Url.Action("ListOrderNotApprove", "Staff")" style="background-color: green" class="le-button big">trở lại</a>*@
+                            </div>
+                        </div>
+                        <!-- /.col -->
+                    </div>
+                    <div class="row no-margin">
+                        <div class="col-xs-12">
+                            <div class="panel panel-primary">
+                                <div class="panel-heading">Danh sách đơn hàng</div>
+                                <div class="panel-body">
+                                    <table class="table display Keytable dataTable" aria-describedby="example_info">
+                                        <thead>
+                                            <tr>
+                                                <th>Stt</th>
+                                                <th>Tên thuốc</th>
+                                                <th>Loại thuốc</th>
+                                                @*<th>Hãng</th>*@
+                                                <th>Giá</th>
+                                                <th>Đơn vị</th>
+                                                <th>Số lượng</th>
+                                                <th>Số lượng giao hàng</th>
+                                                <th>Ghi chú</th>
+                                                <th></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @{
+                                                //var drugstoreTypeID = int.Parse(Session["DrugStoreTypeID"].ToString());
+                                                int i = 0;
+                                                foreach (var item in Model.DrugOrderDetails)
+                                                {
+                                                    i++;
+                                                    //var discount = double.Parse(item.Drug.DiscountRates.Where(b => b.DrugstoreTypeID == drugstoreTypeID).Select(d => d.Discount).SingleOrDefault().ToString());
+                                                    //var actualValue = 100 - discount;
+                                                    //var unitID = item.UnitID;
+                                                    //var finalPrice = @item.Drug.Prices.Where(b => b.UnitID == unitID).Select(b => b.UnitPrice).SingleOrDefault() * actualValue / 100;
+                                                    <tr id="@item.Drug.DrugID">
+                                                        <td>@i</td>
+                                                        <td>@item.Drug.DrugName</td>
+                                                        @*<td>@item.Drug.DrugCompany.DrugCompanyName</td>*@
+                                                        <td>@item.Drug.DrugType.DrugTypeName</td>
+                                                        <td>
+                                                            <div id="price-@item.DrugOrderDetailsID" class=" price-number">
+                                                                @String.Format("{0:0,0}", @item.UnitPrice)
+                                                            </div>VND
+                                                        </td>
+                                                        <td>
+                                                            @if (@item.UnitID == 1)
+                                                            {
+                                                                <p>Hộp</p>
+                                                            }
+                                                            else
+                                                            {
+                                                                <p>Thùng</p>
+                                                            }
+
+                                                        </td>
+                                                        <td>
+                                                            <span id="quantity-@item.DrugOrderDetailsID">@item.Quantity</span>
+                                                        </td>
+                                                        <td>
+                                                            <input id="@item.DrugOrderDetailsID" type="number" min="0" max="9999" class="form-control delivery-quantity" value="@item.Quantity" />
+                                                            <input id="hidden-@item.DrugOrderDetailsID" type="hidden" value="@item.Quantity" />
+                                                        </td>
+                                                        <td>
+                                                            <input id="@item.DrugOrderDetailsID" value="@item.Note" type="text" class="form-control note" />
+                                                        </td>
+                                                    </tr>
+                                                }
+                                            }
+                                        </tbody>
+                                    </table>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+
+
+                </section>
+            </div>
+            <!-- /.col -->
+        </div>
+        <!-- /.container -->
+    </section>
+    <!-- /#checkout-page -->
+}
+<script type="text/javascript">
+    $(document).ready(function () {
+        $(".delivery-quantity").on("change", function () {
+            if (!isNaN($(this).val())) {
+                var detailsID = $(this).attr("id");
+                var quantity = $(this).val();
+                var oldQuantity = $("#hidden-" + detailsID).val();
+                var unitPrice = $("#price-" + detailsID).text().trim().split(",").join("");
+                var totalPrice = parseFloat($("#total-value").text().trim().split(",").join("")) + parseFloat((quantity - oldQuantity) * unitPrice);
+                totalPrice = numeral(totalPrice).format('0,0');
+                if (parseInt(quantity) > 9999) {
+                    alert("Một sản phẩm không được đặt quá 9999 cái !");
+                    $(this).val(oldQuantity);
+                }
+                if (quantity != '' && parseInt(quantity) < 9999 && $(this).val().length < 4) {
+                    $.ajax({
+                        url: '@Url.Action("UpdateDeliveryQuantity", "Staff")',
+                        method: 'POST',
+                        data: { "drugorderDetailsID": detailsID, "deliveryQuantity": quantity }
+                    }).done(function (data) {
+                        $("#hidden-" + detailsID).val(quantity);
+                        $("#total-value").text(totalPrice);
+                        $("#value").text(totalPrice);
+                    }).fail(function (xhr) {
+                        alert("Có lỗi xảy ra!!!");
+                    });
+                }
+
+            } else {
+                alert("Xin nhập lại số lượng");
+            }
+        });
+        $(".note").on("change", function () {
+            var detailsID = $(this).attr("id");
+            var note = $(this).val();
+            //var oldQuantity = $("#hidden-" + detailsID).val();
+            //var unitPrice = $("#price-" + detailsID).text().trim().split(",").join("");
+            //var totalPrice = parseFloat($("#total-value").text().trim().split(",").join("")) + parseFloat((quantity - oldQuantity) * unitPrice);
+            //totalPrice = numeral(totalPrice).format('0,0');
+            //var oldQuantity = $("#hidden-" + detailsID).val();
+            $.ajax({
+                url: '@Url.Action("UpdateNote", "Staff")',
+                method: 'POST',
+                data: { "drugorderDetailsID": detailsID, "note": note }
+            }).done(function (data) {
+            }).fail(function (xhr) {
+                alert("Có lỗi xảy ra!!!");
+            });
+        });
+
+    });
+</script>
+<script src="~/assets/js/numeral.js"></script>

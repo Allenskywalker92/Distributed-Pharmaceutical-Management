@@ -1,0 +1,232 @@
+﻿@model DMS.DAL.Account
+
+@{
+    ViewBag.Title = "Register";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var City = (IEnumerable<DMS.DAL.City>)ViewBag.City;
+}
+<script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=false"></script>
+<!-- ========================================= MAIN ========================================= -->
+<main id="authentication" class="inner-bottom-md">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-3"></div>
+            <div class="col-md-5">
+                <section class="section register inner-right-xs">
+                    <h2 class="bordered">Tạo tài khoản </h2>
+                    <form role="form" class="register-form cf-style-1">
+                        <label id="warning" style="color: red;display: none">-Xin hãy nhập đầy đủ những thông tin bắt buộc.</label>
+                        @*<label id="email-notvalid" style="color: red;display: none">-Địa chỉ email không có thật.xin nhập lại địa chỉ email khác.<br /></label>*@
+                        <p>Thông tin cá nhân</p>
+                        <div class="field-row">
+                            <label>Email<span style="color: red">(*)</span></label>
+                            <input id="email" type="text" class="form-control"><label id="email-notvalid" style="color: red;display: none">-Địa chỉ email không có thật.xin nhập lại địa chỉ email khác.<br /></label>
+                        </div><!-- /.field-row -->
+                        <div class="field-row">
+                            <label>Mật khẩu<span style="color: red">(*)</span></label>
+                            <input minlength="6" id="password" type="password" class="form-control">
+                        </div><!-- /.field-row -->
+                        <div class="field-row">
+                            <label>Tên đầy đủ<span style="color: red">(*)</span></label>
+                            <input id="fullname" type="text" class="form-control">
+                        </div><!-- /.field-row -->
+                        @*<div class="field-row">
+                                <label>Địa chỉ email</label>
+                                <input id="email" type="text" class="form-control">
+                            </div>*@<!-- /.field-row -->
+                        <div class="field-row">
+                            <label>Số điện thoại</label>
+                            <input id="phonenumber" type="text" class="form-control">
+                        </div><!-- /.field-row -->
+                        <p>Thông tin nhà thuốc</p>
+                        <div class="field-row">
+                            <label>Tên nhà thuốc<span style="color: red">(*)</span></label>
+                            <input id="drugstore-name" type="text" class="form-control">
+                        </div><!-- /.field-row -->
+                        <div class="field-row">
+                            <div id="map_canvas" style="width: 680px; height: 300px;">
+                            </div>
+                            <label>Địa chỉ nhà thuốc<span style="color: red">(*)</span></label>
+                            <input id="drugstore-address" type="text" class="form-control" onchange="decodeCoordinate()">
+                            <label id="warning_1" style="color: red;display: none">-Không thể tìm thấy địa chỉ bạn vừa nhập.Xin vui lòng thử địa chỉ khác.<br /></label>
+                            <input id="Coordinate" hidden="hidden" />
+                        </div><!-- /.field-row -->
+                        <div class="field-row">
+                            <label>Thành phố <span style="color: red">(*)</span></label>
+                            @*@Html.DropDownList("City", new SelectList(City, "CityID", "CityName"),
+                                            new { @class = "form-control", style = "width:250px", id = "city" })*@
+                            @Html.DropDownListFor(modelItem => City, new SelectList(City, "CityID", "CityName"), "---Chọn thành phố ---",
+                                                             new { @class = "form-control", style = "width:250px", id = "city" })
+                            <label id="warning_city" style="color: red;display: none">-Hãy chọn thành phố.<br /></label>
+                            @*<input id="drugstore-address" type="text" class="form-control">*@
+                            <input id="Coordinate" hidden="hidden" />
+                        </div><!-- /.field-row -->
+                        <div class="field-row">
+                            <label>Quận<span style="color: red">(*)</span></label>
+                            <select id="district" style="width:250px" class="form-control"></select>
+                            <label id="warning_district" style="color: red;display: none">-Hãy chọn quận.<br /></label>
+                            @*@Html.DropDownList("---Chọn quận ---",new SelectList(District, "DistrictID", "DistrictName"),
+                                            new { @class = "form-control", style = "width:250px", id = "district" })*@
+                            @*<input id="drugstore-address" type="text" class="form-control">*@
+                            <input id="Coordinate" hidden="hidden" />
+                        </div><!-- /.field-row -->
+                        <div class="buttons-holder">
+                            <a class="le-button huge" onclick="register()" href="#">Đăng ký</a>
+                        </div><!-- /.buttons-holder -->
+                    </form>
+                </section><!-- /.register -->
+            </div><!-- /.col -->
+
+        </div><!-- /.row -->
+    </div><!-- /.container -->
+</main>
+<!-- /.authentication -->
+<!-- ========================================= MAIN : END ========================================= -->
+<script type="text/javascript">
+    function isEmail(email) {
+        var emailReg = /^([\w-\.]+@@([\w-]+\.)+[\w-]{2,6})?$/;
+        return emailReg.test(email);
+    }
+    function register() {
+        //var username = $("#username").val();
+        var username = "";
+        var password = $("#password").val();
+        var email = $("#email").val();
+        var fullname = $("#fullname").val();
+        var phonenumber = $("#phonenumber").val();
+        var drugstoreName = $("#drugstore-name").val();
+        var drugstoreAddress = $("#drugstore-address").val();
+        var coordinate = $("#Coordinate").val();
+        var district = $("#district").val();
+        var city = $("#city").val();
+        if (coordinate == "") {
+            $("#warning_1").css("display", "inline");
+        }
+        if (city == null||city =="") {
+            $("#warning_city").css("display", "inline");
+        }
+        if (district == null || district == "") {
+            $("#warning_district").css("display", "inline");
+        }
+        if (coordinate != "") {
+            $("#warning_1").css("display", "none");
+        }
+        if (!isEmail(email)) {
+            $("#email-notvalid").css("display", "inline");
+        }
+        if (isEmail(email) && email.length > 0 &&
+            password.length > 0 && drugstoreName.length > 0
+            && drugstoreAddress.length > 0 && fullname.length > 0 && city != null && city != ""
+        && district != null && district != "") {
+            $("#email-notvalid").css("display", "none");
+            $.ajax({
+                url: '/Account/RegisterDrugstoreAccount',
+                method: 'POST',
+                data: { "username": username, "password": password, "fullname": fullname, "email": email, "phonenumber": phonenumber, "drugstoreName": drugstoreName, "drugstoreAddress": drugstoreAddress, "coordinate": coordinate, "districtID": district }
+            }).done(function (data) {
+                if (data.type == "Successful") {
+                    window.location = "\RegisterResult";
+                } else if (data.type == "Fail") {
+                    alert(data.message);
+                } else if (data.type == "DrugstoreAlreadyHaveAccount") {
+                    alert(data.message);
+                } else {
+                    window.location = "\MappingDrugstore";
+                }
+            }).fail(function (xhr) {
+                window.location = "\RegisterResult.cshtml";
+            });
+        } else {
+            $("#warning").css("display", "inline");
+        }
+    }
+    window.onload = GetCoordinate();
+
+    function initialize() {
+        var mapOptions = {
+            center: new google.maps.LatLng(21.0277640, 105.8341600),//21.0277640,105.8341600 10.8230989, 106.6296638
+            zoom: 15,
+            mapTypeId: google.maps.MapTypeId.ROADMAP
+        };
+        var map = new google.maps.Map(document.getElementById("map_canvas"),
+            mapOptions);
+
+    }
+
+    function mapActive(lat, long) {
+
+        var map = new google.maps.Map(document.getElementById('map_canvas'), {
+            zoom: 15,
+            center: new google.maps.LatLng(lat, long),
+            mapTypeId: google.maps.MapTypeId.ROADMAP
+        });
+        //create marker
+
+        var marker = new google.maps.Marker({
+            position: new google.maps.LatLng(lat, long),
+            map: map,
+            animation: google.maps.Animation.BOUNCE,
+
+            title: 'My Place'
+        });
+
+        google.maps.event.addDomListener(window, 'load', initialize);
+    }
+
+    function GetCoordinate() {
+        mapActive(14.0583240, 108.2771990);
+        //$.ajax({
+        //    url: "/Staff/GetCoordinate",
+        //    contentType: "application/json",
+        //    dataType: "json",
+        //    data: { DrugstoreID: id },
+        //    success: function (result) {
+        //        var first = result.Coordinate.indexOf(',');
+        //        var firstLat = parseFloat(result.Coordinate.substring(0, first));
+        //        var firstLong = parseFloat(result.Coordinate.substring(first + 1, result.Coordinate.length));
+        //    }
+        //});
+    }
+    function decodeCoordinate() {
+        var address = document.getElementById("drugstore-address").value;
+        $.ajax({
+            url: "http://maps.googleapis.com/maps/api/geocode/json?address=" + address + "&sensor=false",
+            type: "POST",
+            //success: function (res) {
+            //    //document.getElementById('Coordinate').value = res.results[0].geometry.location.lat + ', ' + res.results[0].geometry.location.lng;
+            //    var lat = res.results[0].geometry.location.lat;
+            //    var long = res.results[0].geometry.location.lng;
+            //    document.getElementById('Coordinate').value = res.results[0].geometry.location.lat + ', ' + res.results[0].geometry.location.lng;
+            //    mapActive(lat, long);
+            //},
+            //fail: function (ex){
+            //    alert("Không tìm thấy địa chỉ bạn vừa nhập. Xin vui lòng nhập lại !");
+            //}
+        }).done(function (res) {
+            var lat = res.results[0].geometry.location.lat;
+            var long = res.results[0].geometry.location.lng;
+            document.getElementById('Coordinate').value = res.results[0].geometry.location.lat + ', ' + res.results[0].geometry.location.lng;
+            mapActive(lat, long);
+        }).fail(function (xhr) {
+            alert("Không tìm thấy địa chỉ bạn vừa nhập. Xin vui lòng nhập lại !");
+        });;
+    }
+
+    $(document).on("ready", function () {
+        $("#city").on("change", function () {
+            var cityID = $("#city").val();
+            $.ajax({
+                url: '@Url.Action("ListDistrict","Account")',
+                type: "POST",
+                data: { "cityId": cityID },
+            }).done(function (data) {
+                $("#district").empty();
+                for (var i = 0; i < data.length; i++) {
+                    $("#district").append("<option value=" + data[i].DistrictID + ">" + data[i].DistrictName + "</option>");
+                }
+            }).fail(function (xhr) {
+                alert("Xin hãy chọn lại thành phố !");
+            });;
+        });
+    });
+</script>

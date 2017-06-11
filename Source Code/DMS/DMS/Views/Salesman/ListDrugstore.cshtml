@@ -1,0 +1,70 @@
+﻿@model IEnumerable<DMS.DAL.Drugstore>
+@{
+    ViewBag.Title = "Danh sách nhà thuốc";
+    Layout = "~/Views/Salesman/_LayoutSalesman.cshtml";
+}
+
+<div class="row">
+    <div class="col-lg-8">
+        <div class="panel panel-primary">
+            <div class="panel-heading">
+                @ViewBag.Title
+            </div>
+            <div class="panel-body">
+                <div class="table-responsive">
+                    
+                    <table class="table display KeyTable dataTable" id="TableDS" aria-describedby="example_info">
+                        <thead>
+                            <tr>
+                                <th> Tên nhà thuốc     </th>
+                                <th>Địa chỉ      </th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if(Model!=null){foreach (var item in Model)
+                            {
+                                <tr>
+                                    <td>
+                                        <a href="@Url.Action("DrugstoreDetails", "Salesman", new { id= item.DrugstoreID})">@Html.DisplayFor(modelItem => item.DrugstoreName)</a> 
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.Address)
+                                    </td>
+                                    <td>
+                                        <a href="@Url.Action("SalesmanCart", "Salesman", new {  drugstoreID= item.DrugstoreID})" class="btn btn-primary">Tạo đơn hàng</a>
+                                    </td>
+                                </tr>
+                            }
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        //var table = $('#TableDS').DataTable();
+        //new $.fn.dataTable.KeyTable(table);
+
+
+        $('#TableDS').dataTable({
+            "oLanguage": {
+                "sSearch": "Tìm kiếm:",
+                "sLengthMenu": "Hiển thị _MENU_ nhà thuốc",
+                "sInfoEmpty": "Không có dữ liệu",
+                "sZeroRecords": "Không có dữ liệu",
+                "sEmptyTable": "Không có dữ liệu",
+                "sInfo": "Hiển thị _START_ đến _END_ trên _TOTAL_ nhà thuốc",
+                "oPaginate": {
+                    "sNext": "Trang sau",
+                    "sPrevious": "Trang trước"
+                }
+
+            }
+        });
+    });
+</script>

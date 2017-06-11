@@ -1,0 +1,116 @@
+﻿@model IEnumerable<DMS.DAL.DrugOrder>
+
+@{
+    ViewBag.Title = "Danh sách yêu cầu ";
+    Layout = "~/Views/Staff/_LayoutStaff.cshtml";
+}
+<div class="row">
+    <div class="col-lg-12">
+        <div class="panel panel-primary">
+            <div class="panel-heading">
+                @ViewBag.Title
+            </div>
+            <div class="panel-body">
+                <p>
+                    @*<a href="@Url.Action("CreateDrug", "Staff")" class="btn btn-primary">Tạo mới</a>*@
+                    @*                    @Html.ActionLink("Create New", "CreateDrug")*@
+                </p>
+                <div>
+                    <table class="display" id="TableDrug">
+                        <thead>
+                            <tr>
+                                <th>Stt   </th>
+                                <th>Nhà thuốc    </th>
+                                <th>Nội dung    </th>
+                                <th>Ngày yêu cầu</th>
+                                <th>Thành tiền            </th>
+                                <th>Trạng thái</th>
+                                @*<th>Ghi chú</th>*@
+                               @* <th></th>*@
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (Model != null)
+                            {
+                                for (int i = Model.Count() - 1; i >= 0; i--)
+                                //foreach (var item in Model)
+                                {
+                                    var item = Model.ElementAt(i);
+                                <tr>
+                                    <td>
+                                        @*@Html.DisplayFor(modelItem => item.DrugOrderID)*@
+                                        @i<br/>
+                                        @Html.ActionLink("Xem chi tiết", "OrderDetails", new { orderID = item.DrugOrderID })
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.Drugstore.DrugstoreName)
+                                    </td>
+                                    <td>
+                                        @foreach (var orderDetail in item.DrugOrderDetails)
+                                        {
+                                            @orderDetail.Drug.DrugName<br />
+                                        }
+                                    </td>
+                                    <td>
+                                        @item.DateOrder.Value.ToString("dd/mm/yyyy")
+                                        @*@Html.DisplayFor(modelItem => item.DateOrder)*@
+                                    </td>
+                                    <td>
+                                        <label>@String.Format("{0:0,0}",@item.TotalPrice)</label>
+                                        @*@Html.DisplayFor(modelItem => item.TotalPrice)*@ VND
+                                    </td>
+                                    <td>
+                                        @if (item.Status==1) {
+                                           <div style="color:darkturquoise;font-weight: bold"> Chờ xác nhận</div>
+                                        }else if(item.Status==2){
+                                            <div style="color:coral;font-weight: bold">Đã xác nhận</div>;
+                                        }
+                                        else if(item.Status==3){
+                                            <div style="color:green;font-weight: bold">Đang giao hàng</div>;
+                                        }                                     
+                                        else if(item.Status==4){
+                                            <div style="color:blue;font-weight: bold">Đã hoàn tất</div>;
+                                        }                                     
+                                        else if(item.Status==5){
+                                            <div style="color:red;font-weight: bold">Đã huỷ</div>;
+                                        }                                                                          
+                                    </td>
+                                  
+                                </tr>
+                                }
+                            }
+                        </tbody>
+
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        //var table = $('#TableDrug').DataTable();
+        //new $.fn.dataTable.KeyTable(table);
+
+        var table=$('#TableDrug').dataTable({
+            "oLanguage": {
+                "sSearch": "Tìm kiếm:",
+                "sLengthMenu": "Hiển thị _MENU_ yêu cầu",
+                "sInfoEmpty": "Không có dữ liệu",
+                "sZeroRecords": "Không có dữ liệu",
+                "sEmptyTable": "Không có dữ liệu",
+                "sInfo": "Hiển thị _START_ đến _END_ trên _TOTAL_ yêu cầu",
+                "oAria": {
+                    "sSortDescending": "+",
+                    "sSortAscending": "-",
+                },
+                "oPaginate": {
+                    "sNext": "Trang sau",
+                    "sPrevious": "Trang trước"
+                },
+            }, "order": [[0, "desc"]]
+        });
+    });
+</script>
+

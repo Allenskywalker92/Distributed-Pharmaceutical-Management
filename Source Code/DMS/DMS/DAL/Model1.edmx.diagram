@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+ <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+      <Diagram DiagramId="28725790592642ef85ee3b723e0ca22f" Name="Diagram1" DisplayType="true" ZoomLevel="34">
+        <EntityTypeShape EntityType="DMSModel.Account" Width="1.5" PointX="13.625" PointY="7.375" />
+        <EntityTypeShape EntityType="DMSModel.AccountProfile" Width="1.5" PointX="11.375" PointY="11.875" />
+        <EntityTypeShape EntityType="DMSModel.City" Width="1.5" PointX="0.75" PointY="0.875" />
+        <EntityTypeShape EntityType="DMSModel.DeliveryMan" Width="1.5" PointX="9" PointY="0.875" />
+        <EntityTypeShape EntityType="DMSModel.DeliverySchedule" Width="1.5" PointX="11.25" PointY="0.75" />
+        <EntityTypeShape EntityType="DMSModel.DeliveryScheduleDetail" Width="1.5" PointX="13.5" PointY="2.875" />
+        <EntityTypeShape EntityType="DMSModel.DiscountRate" Width="1.5" PointX="9" PointY="12.25" />
+        <EntityTypeShape EntityType="DMSModel.District" Width="1.5" PointX="6" PointY="11.25" />
+        <EntityTypeShape EntityType="DMSModel.Drug" Width="1.5" PointX="3" PointY="10.5" />
+        <EntityTypeShape EntityType="DMSModel.DrugCompany" Width="1.5" PointX="0.75" PointY="9.875" />
+        <EntityTypeShape EntityType="DMSModel.DrugOrder" Width="1.5" PointX="8.25" PointY="4.125" />
+        <EntityTypeShape EntityType="DMSModel.DrugOrderDetail" Width="1.5" PointX="10.5" PointY="4.5" />
+        <EntityTypeShape EntityType="DMSModel.Drugstore" Width="1.5" PointX="6" PointY="5.875" />
+        <EntityTypeShape EntityType="DMSModel.DrugstoreType" Width="1.5" PointX="0.75" PointY="6.875" />
+        <EntityTypeShape EntityType="DMSModel.DrugType" Width="1.5" PointX="0.75" PointY="12.875" />
+        <EntityTypeShape EntityType="DMSModel.Payment" Width="1.5" PointX="8.25" PointY="8.25" />
+        <EntityTypeShape EntityType="DMSModel.Price" Width="1.5" PointX="10.5" PointY="8.875" />
+        <EntityTypeShape EntityType="DMSModel.Role" Width="1.5" PointX="0.75" PointY="3.875" />
+        <EntityTypeShape EntityType="DMSModel.Unit" Width="1.5" PointX="5.25" PointY="2.75" />
+        <AssociationConnector Association="DMSModel.FK_Account_AccountProfile" />
+        <AssociationConnector Association="DMSModel.FK_Account_Role" />
+        <AssociationConnector Association="DMSModel.FK_District_Account" />
+        <AssociationConnector Association="DMSModel.FK_Drugstore_Account" />
+        <AssociationConnector Association="DMSModel.FK_District_City" />
+        <AssociationConnector Association="DMSModel.FK_DeliverySchedule_DeliveryMan" />
+        <AssociationConnector Association="DMSModel.FK_DeliveryScheduleDetails_DeliverySchedule" />
+        <AssociationConnector Association="DMSModel.FK_DeliveryScheduleDetails_DrugOrder" />
+        <AssociationConnector Association="DMSModel.FK_DiscountRate_Drug" />
+        <AssociationConnector Association="DMSModel.FK_DiscountRate_DrugstoreType" />
+        <AssociationConnector Association="DMSModel.FK_Drugstore_District" />
+        <AssociationConnector Association="DMSModel.FK_Drug_DrugCompany" />
+        <AssociationConnector Association="DMSModel.FK_Drug_DrugType" />
+        <AssociationConnector Association="DMSModel.FK_DrugOrderDetails_Drug" />
+        <AssociationConnector Association="DMSModel.FK_Price_Drug" />
+        <AssociationConnector Association="DMSModel.FK_DrugOrder_Drugstore" />
+        <AssociationConnector Association="DMSModel.FK_DrugOrderDetails_DrugOrder" />
+        <AssociationConnector Association="DMSModel.FK_DrugOrderDetails_Unit" />
+        <AssociationConnector Association="DMSModel.FK_Debt_Drugstore" />
+        <AssociationConnector Association="DMSModel.FK_Drugstore_DrugstoreType" />
+        <AssociationConnector Association="DMSModel.FK_Price_Unit" />
+        <AssociationConnector Association="DMSModel.FK_DrugOrder_Account" />
+      </Diagram>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>

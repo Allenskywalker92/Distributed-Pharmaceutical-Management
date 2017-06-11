@@ -1,0 +1,199 @@
+﻿@using System.Globalization
+@using DMS.DAL
+@model DMS.DAL.DrugOrder
+@{
+    ViewBag.Title = "OrderDetails";
+    Layout = "~/Views/Staff/_LayoutStaff.cshtml";
+}
+
+@{
+    if (Session["User"] != null)
+    {
+
+        var user = (Account)Session["User"];
+        <section id="checkout-page">
+            <div class="container">
+                <div class="col-xs-12 no-margin">
+                    <section id="your-order">
+                        <h2 class="border h1">Thông tin đơn hàng</h2>
+                        <!-- /.billing-address -->
+                        <div id="total-area" class="row no-margin">
+                            <div class="col-xs-12 col-lg-8 col-lg-offset-4 no-margin-left">
+                                <div class="billing-address">
+
+                                    <form>
+                                        <div class="row field-row">
+                                            <div class="col-xs-12 col-sm-6">
+                                                <label>tên và họ</label>
+                                                <input class="le-input" value="@user.AccountProfile.FullName">
+                                            </div>
+                                        </div>
+                                        <!-- /.field-row -->
+                                        <div class="row field-row">
+                                            <div class="col-xs-12 col-sm-4">
+                                                <label>số điện thoại </label>
+                                                <input class="le-input" value="@user.AccountProfile.Phone">
+                                            </div>
+                                            @*<div class="col-xs-12 col-sm-4">
+                                                    <label>địa chỉ email</label>
+                                                    <input class="le-input" value="@user.AccountProfile.Email">
+                                                </div>*@
+
+                                            @*<div class="col-xs-12 col-sm-4">
+                                                    <label></label>
+                                                    <input class="le-input" >
+                                                </div>*@
+                                        </div>
+                                        <!-- /.field-row -->
+                                        <div class="row field-row">
+                                            <div class="col-xs-12 col-sm-6">
+                                                <label>tên nhà thuốc</label>
+                                                <input class="le-input" value="@Model.Drugstore.DrugstoreName" disabled="">
+                                            </div>
+                                        </div>
+                                        <!-- /.field-row -->
+                                        <div class="row field-row">
+                                            <div class="col-xs-12 col-sm-6">
+                                                <label>địa chỉ giao hàng</label>
+                                                <input class="le-input" data-placeholder="địa chỉ" value="@Model.Drugstore.Address" disabled="">
+                                            </div>
+                                        </div>
+                                        <!-- /.field-row -->
+                                        <div class="row field-row">
+                                            <div class="col-xs-12 col-sm-6">
+                                                <label>Ghi chú</label>
+                                                <input class="le-input" disabled="" value="@Model.Note" aria-multiline="">
+                                            </div>
+                                        </div>
+                                        <!-- /.field-row -->
+                                    </form>
+
+                                </div>
+                            </div>
+                            <div class="col-xs-12 col-lg-4  no-margin-right">
+                                <div id="subtotal-holder">
+                                    <ul class="tabled-data inverse-bold no-border">
+                                        <li>
+                                            <label>Tổng cộng đơn hàng:</label>
+                                            <div class="value ">@String.Format("{0:0,0}", Model.TotalPrice) VND</div>
+                                        </li>
+                                        <li>
+                                            <label>Giao hàng:</label>
+                                            <div class="value">
+                                                <div class="radio-group">
+                                                    <input checked class="le-radio" type="radio" name="group1" value="free">
+                                                    <div class="radio-label bold">Miễn phí</div>
+                                                    <br>
+                                                </div>
+                                            </div>
+                                        </li>
+                                    </ul>
+                                    <!-- /.tabled-data -->
+
+                                    <ul id="total-field" class="tabled-data inverse-bold ">
+                                        <li>
+                                            <label>Tổng cộng tất cả:</label>
+                                            <div class="value">@String.Format("{0:0,0}", Model.TotalPrice) VND</div>
+                                        </li>
+                                    </ul>
+                                    <!-- /.tabled-data -->
+                                </div>
+                                <!-- /#subtotal-holder -->
+                                <div class="place-order-button">
+
+                                    <a href="@Url.Action("ListAllOrder", "Staff")" class="le-button big" style="background-color: red">trở lại</a>
+                                </div>
+                            </div>
+                            <!-- /.col -->
+                        </div>
+                        <div class="row no-margin">
+                            <div class="col-xs-12 no-margin-left">
+                                <div class="panel panel-primary">
+                                    <div class="panel-heading">Danh sách đơn hàng</div>
+                                    <div class="panel-body">
+                                        <table class="table display Keytable dataTable" aria-describedby="example_info">
+                                            <thead>
+                                                <tr>
+                                                    <th>Stt</th>
+                                                    <th style="width: 100px">Tên thuốc</th>
+                                                    <th>Loại thuốc</th>
+                                                    <th>Giá</th>
+                                                    <th>Đơn vị</th>
+                                                    <th>Số lượng</th>
+                                                    <th>Số lượng giao</th>
+                                                    <th>Ghi Chú</th>
+                                                    <th></th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @{
+        //var drugstoreTypeID = int.Parse(Session["DrugStoreTypeID"].ToString());
+        int i = 0;
+        foreach (var item in Model.DrugOrderDetails)
+        {
+            i++;
+            //var discount = double.Parse(item.Drug.DiscountRates.Where(b => b.DrugstoreTypeID == drugstoreTypeID).Select(d => d.Discount).SingleOrDefault().ToString());
+            //var actualValue = 100 - discount;
+            //var unitID = item.UnitID;
+            //var finalPrice = @item.Drug.Prices.Where(b => b.UnitID == unitID).Select(b=>b.UnitPrice).SingleOrDefault() * actualValue / 100;
+            <tr id="@item.Drug.DrugID">
+                <td>@i</td>
+                <td>@item.Drug.DrugName</td>
+                @*<td>@item.Drug.DrugCompany.DrugCompanyName</td>*@
+                <td>@item.Drug.DrugType.DrugTypeName</td>
+                <td>
+                    <div id="price-@item.Drug.DrugID" class="price-number">
+
+                        @String.Format("{0:0,0}", @item.UnitPrice)
+                    </div>
+                </td>
+                <td>
+                    @if (@item.UnitID == 1)
+                    {
+                        <p>Hộp</p>
+                    }
+                    else
+                    {
+                        <p>Thùng</p>
+                    }
+
+                </td>
+                <td>
+                    @item.Quantity
+                </td>
+                <td>
+                    @item.DeliveryQuantity
+                    @*<input class="form-control" style="width: 75px" id="delivery-@i" type="text" value="@item.DeliveryQuantity" />*@
+                </td>
+                <td>
+                    @item.Note
+                    @*<input class="form-control" style="width: 200px;" id="note-@i" type="text" value="@item.Note" />*@
+                </td>
+            </tr>
+        }
+                                                }
+                                            </tbody>
+                                        </table>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+
+
+
+                    </section>
+                </div>
+                <!-- /.col -->
+            </div>
+            <!-- /.container -->
+        </section>
+        <!-- /#checkout-page -->
+    }
+
+}
+<link href="~/assets/css/main.css" rel="stylesheet" />
+<link href="~/assets/css/blue.css" rel="stylesheet" />
+<link href="~/assets/css/jquery-ui.css" rel="stylesheet" />
+<script src="~/assets/js/jquery-ui.js"></script>

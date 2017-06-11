@@ -1,0 +1,35 @@
+﻿@model DMS.DAL.DrugstoreGroup
+
+@{
+    ViewBag.Title = "DeleteDrugstoreGroup";
+    Layout = "~/Views/Staff/_LayoutStaff.cshtml";
+}
+
+<div class="row">
+    <div class="col-lg-8">
+        <div class="panel panel-primary">
+            <div class="panel-heading">
+                @ViewBag.Title
+            </div>
+            <div class="panel-body">
+                <h4>Bạn có muốn xoá nhóm nhà thuốc này?</h4>
+
+                <div class="display-field">
+                    <strong>Nhóm : </strong>@Html.DisplayFor(model => model.DrugstoreGroupID)
+                </div>
+
+                <div class="display-field">
+                    <strong>Nhân viên tiếp thị: </strong>@Html.DisplayFor(model => model.Account.UserName)
+                </div>
+                @using (Html.BeginForm())
+                {
+                    <p>
+                        <input type="submit" class="btn btn-primary" value="Xoá" />
+                        |
+        @Html.ActionLink("Trở về danh sách", "ListDrug")
+                    </p>
+                }
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,113 @@
+﻿@model IEnumerable<DMS.DAL.DrugType>
+<div id="top-banner-and-menu">
+    <div class="container">
+
+        <div class="col-xs-12 col-sm-4 col-md-3 sidemenu-holder">
+            <!-- ================================== TOP NAVIGATION ================================== -->
+            <div class="side-menu animate-dropdown">
+                <div class="head"><i class="fa fa-list"></i>drugs type</div>
+                <nav class="yamm megamenu-horizontal" role="navigation">
+                    <ul class="nav">
+                        @foreach (var item in Model)
+                        {
+                            <li class="dropdown menu-item">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown">@item.DrugTypeName</a>
+                                @* <ul class="dropdown-menu mega-menu">
+                                <li class="yamm-content">
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <ul class="list-unstyled">
+                                                <li><a href="index.html">Home</a></li>
+                                                <li><a href="index-2.html">Home Alt</a></li>
+                                                <li><a href="category-grid.html">Category - Grid/List</a></li>
+                                                <li><a href="category-grid-2.html">Category 2 - Grid/List</a></li>
+                                                <li><a href="single-product.html">Single Product</a></li>
+                                                <li><a href="single-product-sidebar.html">Single Product with Sidebar</a></li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </li>
+                            </ul>*@
+                            </li>
+                            <!-- /.menu-item -->
+                        }
+
+                    </ul>
+                    <!-- /.nav -->
+                </nav>
+                <!-- /.megamenu-horizontal -->
+            </div>
+            <!-- /.side-menu -->
+            <!-- ================================== TOP NAVIGATION : END ================================== -->
+        </div>
+        <!-- /.sidemenu-holder -->
+
+        <div class="col-xs-12 col-sm-8 col-md-9 homebanner-holder">
+            <!-- ========================================== SECTION – HERO ========================================= -->
+
+            <div id="hero">
+                <div id="owl-main" class="owl-carousel owl-inner-nav owl-ui-sm">
+
+                    <div class="item" style="background-image: url(assets/images/sliders/slider01.jpg);">
+                        <div class="container-fluid">
+                            <div class="caption vertical-center text-left">
+                                <div class="big-text fadeInDown-1">
+                                    Save up to a<span class="big"><span class="sign">$</span>400</span>
+                                </div>
+
+                                <div class="excerpt fadeInDown-2">
+                                    on selected laptops<br>
+                                    & desktop pcs or<br>
+                                    smartphones
+                                </div>
+                                <div class="small fadeInDown-2">
+                                    terms and conditions apply
+                                </div>
+                                <div class="button-holder fadeInDown-3">
+                                    <a href="single-product.html" class="big le-button ">shop now</a>
+                                </div>
+                            </div>
+                            <!-- /.caption -->
+                        </div>
+                        <!-- /.container-fluid -->
+                    </div>
+                    <!-- /.item -->
+
+                    <div class="item" style="background-image: url(assets/images/sliders/slider03.jpg);">
+                        <div class="container-fluid">
+                            <div class="caption vertical-center text-left">
+                                <div class="big-text fadeInDown-1">
+                                    Want a<span class="big"><span class="sign">$</span>200</span>Discount?
+                                </div>
+
+                                <div class="excerpt fadeInDown-2">
+                                    on selected
+                                    <br>
+                                    desktop pcs<br>
+                                </div>
+                                <div class="small fadeInDown-2">
+                                    terms and conditions apply
+                                </div>
+                                <div class="button-holder fadeInDown-3">
+                                    <a href="single-product.html" class="big le-button ">shop now</a>
+                                </div>
+                            </div>
+                            <!-- /.caption -->
+                        </div>
+                        <!-- /.container-fluid -->
+                    </div>
+                    <!-- /.item -->
+
+                </div>
+                <!-- /.owl-carousel -->
+                <br />
+            </div>
+
+            <!-- ========================================= SECTION – HERO : END ========================================= -->
+        </div>
+        <!-- /.homebanner-holder -->
+
+    </div>
+    <!-- /.container -->
+</div>
+<!-- /#top-banner-and-menu -->

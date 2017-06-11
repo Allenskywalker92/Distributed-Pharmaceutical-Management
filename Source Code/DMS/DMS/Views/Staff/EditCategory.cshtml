@@ -1,0 +1,40 @@
+﻿@model DMS.DAL.DrugType
+@{
+    ViewBag.Title = "Chỉnh sửa loại thuốc";
+    Layout = "~/Views/Staff/_LayoutStaff.cshtml";
+}
+@*<script src="~/Scripts/jquery-1.7.1.min.js"></script>
+<script src="~/Scripts/jquery.validate.min.js"></script>
+<script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>*@
+
+<div class="row">
+    <div class="col-lg-12">
+        <div class="panel panel-primary">
+            <div class="panel-heading">
+                @ViewBag.Title
+            </div>
+            <div class="panel-body">
+                @using (Html.BeginForm())
+                {
+                    @Html.ValidationSummary(true)
+
+                    @Html.HiddenFor(model => model.DrugTypeID)
+                           
+                    <div class="editor-field">
+                        <strong>Tên loại thuốc: </strong>@Html.EditorFor(model => model.DrugTypeName)
+                        @Html.ValidationMessageFor(model => model.DrugTypeName)
+                    </div>
+
+                    <p>
+                        <input type="submit" class="btn btn-primary" value="Lưu" />
+                    </p>           
+                }
+                <div>
+                    @Html.ActionLink("Trở về danh sách", "ListCategory")
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+

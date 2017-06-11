@@ -1,0 +1,310 @@
+﻿<!DOCTYPE html>
+
+<html>
+    <head>
+        <meta name="viewport" content="width=device-width" />
+        <!-- jQuery Version 1.11.0 -->
+        <script src="~/Content/js/jquery-1.11.0.js"></script>
+        <script src="~/assets/js/accounting.js"></script>
+        <!-- Bootstrap Core JavaScript -->
+        <script src="~/Content/js/bootstrap.min.js"></script>
+   
+        <!-- Metis Menu Plugin JavaScript -->
+        <script src="~/Content/js/plugins/metisMenu/metisMenu.min.js"></script>
+
+        <!-- Custom Theme JavaScript -->
+        <script src="~/Content/js/sb-admin-2.js"></script>
+    
+        <!-- Bootstrap Core CSS -->
+        <link href="~/Content/css/bootstrap.min.css" rel="stylesheet" />
+        <!-- MetisMenu CSS -->
+        <link href="~/Content/css/plugins/metisMenu/metisMenu.min.css" rel="stylesheet" />
+        <!-- Timeline CSS -->
+        <link href="~/Content/css/plugins/timeline.css" rel="stylesheet" />
+        <!-- Custom CSS -->
+        <link href="~/Content/css/sb-admin-2.css" rel="stylesheet" />
+        <!-- Morris Charts CSS -->
+        <link href="~/Content/css/plugins/morris.css" rel="stylesheet" />
+        <!-- Custom Fonts -->
+        <link href="~/Content/font-awesome-4.1.0/css/font-awesome.min.css" rel="stylesheet" />
+        <link href="~/assets/css/jquery-ui.css" rel="stylesheet" />
+        <script src="~/assets/js/jquery-ui.js"></script>
+        <!--DataTables JavaScript-->
+        @*<script src="~/Content/media/js/jquery.js"></script>*@
+        <script src="~/Content/media/js/jquery.dataTables.js"></script>
+        <script src="~/Content/KeyTable/js/dataTables.keyTable.js"></script>
+        <!--DataTables Css-->
+        @*    <link href="~/Content/KeyTable/css/dataTables.keyTable.css" rel="stylesheet" />*@
+        <link href="~/Content/media/css/jquery.dataTables.css" rel="stylesheet" />
+        <script src="~/assets/js/numeral.js"></script>
+
+        <title>@ViewBag.Title</title>
+        @{
+            var Username = (string)Session["Email"];
+            var UserRole = (string)Session["UserRole"];
+        }
+    </head>
+    <body>
+        <div id="wrapper">
+
+            <!-- Navigation -->
+            <nav class="navbar navbar-default navbar-static-top" role="navigation" style="margin-bottom: 0">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    @*<a class="navbar-brand" href="/Home/Index">DMS</a>*@
+                    <label href="/Staff/Index" style="width:233px ;height:54px ;font-size: 32px;color:#3498db " >DMS</label>
+                </div>
+                <!-- /.navbar-header -->
+
+                <ul class="nav navbar-top-links navbar-right">
+                    @if (Username != null)
+                    {
+                        string username = Username.ToUpper();
+                        <p class="nav navbar-top-links navbar-right">
+                            <i class="fa fa-user fa-fw"></i>@username
+                            <br />
+                            <a href="/Account/LogOff"><i class="fa fa-sign-out"></i>Đăng xuất</a>
+                        </p>
+                    }
+                    else
+                    {
+                        //<li><a href="@Url.Action("Register", "Account")">Register</a></li>
+                        <li><a href="@Url.Action("LogIn", "Account")">Đăng nhập</a></li>
+                    }
+
+
+
+                    @*<li class="dropdown">
+                    <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                        <i class="fa fa-user fa-fw"></i><i class="fa fa-caret-down"></i>
+                    </a>
+                    <ul class="dropdown-menu dropdown-user">
+                        <li><a href="#"><i class="fa fa-user fa-fw"></i>User Profile</a>
+                        </li>
+                        <li class="divider"></li>
+                        <li><a href="login.html"><i class="fa fa-sign-out fa-fw"></i>Logout</a>
+                        </li>
+                    </ul>
+                    <!-- /.dropdown-user -->
+                </li>
+                <!-- /.dropdown -->*@
+                </ul>
+                <!-- /.navbar-top-links -->
+
+                <div class="navbar-default sidebar" role="navigation">
+                    <div class="sidebar-nav navbar-collapse">
+                        <ul class="nav" id="side-menu">
+                            <li>
+                                <a class="active" href="/Staff/Index"><i class="fa fa-dashboard fa-fw"></i>Trang chủ</a>
+                            </li>
+                            <li>
+                                <a href="Staff/ListDrug"><i class="fa fa-bar-chart-o fa-fw"></i>Danh sách thuốc<span class="fa arrow"></span></a>
+                                <ul class="nav nav-second-level">
+                                    <li>
+                                        <a href="/Staff/ListDrug">Quản lí thuốc</a>
+                                    </li>
+                                    <li>
+                                        <a href="/Staff/CreateDrug">Thêm thuốc mới</a>
+                                    </li>
+                                </ul>
+                                <!-- /.nav-second-level -->
+                            </li>
+                            <li>
+                                <a href="/Staff/ListCategory"><i class="fa fa-wrench fa-fw"></i>Danh sách loại thuốc</a>
+                                @*     <ul class="nav nav-second-level">
+                                <li>
+                                    <a href="/Staff/ListCategory">Quản lí loại thuốc</a>
+                                </li>
+                            </ul>*@
+                                <!-- /.nav-second-level -->
+                            </li>
+                            <li>
+                                <a href="#"><i class="fa fa-wrench fa-fw"></i>Quản lí nhà thuốc<span class="fa arrow"></span></a>
+                                <ul class="nav nav-second-level">
+                                    <li>
+                                        <a href="/Staff/ListDrugstore">Danh sách nhà thuốc</a>
+                                    </li>
+                                    @*<li>
+                                    <a href="/Staff/ListDrugstoreGroup">Danh sách nhóm nhà thuốc</a>
+                                </li>
+                                <li>
+                                    <a href="@Url.Action("GroupDrugstoreOption","Staff")">Tạo nhóm cho nhà thuốc</a>
+                                </li>
+                                <li>
+                                 <a href="@Url.Action("AssignForSaleman","Staff")">Phân nhóm nhà thuốc cho nhân viên tiếp thị</a>
+                                </li>*@
+                                    @* <li>
+                                    <a href="/Staff/AddDrugstore">Thêm nhà thuốc</a>
+                                </li>
+                                <li>
+                                    <a href="/Staff/ApproveDrugstore">Xác nhận nhà thuốc</a>
+                                </li>*@
+                                </ul>
+                                <!-- /.nav-second-level -->
+                            </li>
+                            <li>
+                                <a href="#"><i class="fa fa-wrench fa-fw"></i>Yêu cầu<span class="fa arrow"></span></a>
+                                <ul class="nav nav-second-level">
+                                    <li>
+                                        <a href="/Staff/ListOrderNotApprove">Tiếp nhận đơn hàng</a>
+                                    </li>
+                                    <li>
+                                        <a href="/Staff/ListAllOrder">Danh sách đơn hàng</a>
+                                    </li>
+
+                                </ul>
+                                <!-- /.nav-second-level -->
+                            </li>
+                            @*  <li>
+                            <a href="#"><i class="fa fa-wrench fa-fw"></i>Quản lí tiếp thị<span class="fa arrow"></span></a>
+                            <ul class="nav nav-second-level">
+                                <li>
+                                    <a href="#">Tạo mới nhân viên tiếp thị</a>
+                                </li>
+                                <li>
+                                    <a href="#">Khoá/ Mở tài khoản</a>
+                                </li>
+                            </ul>
+                            <!-- /.nav-second-level -->
+                        </li>*@
+                            @*<li>
+                            <a href="#"><i class="fa fa-wrench fa-fw"></i>Manage Deliveryman<span class="fa arrow"></span></a>
+                            <ul class="nav nav-second-level">
+                                <li>
+                                    <a href="">Create new Deliveryman</a>
+                                </li>
+                                <li>
+                                    <a href="buttons.html">Update information</a>
+                                </li>
+                                <li>
+                                    <a href="buttons.html">Delete Deliveryman</a>
+                                </li>
+                            </ul>
+                            <!-- /.nav-second-level -->
+                        </li>*@
+                            <li>
+                                <a href="@Url.Action("List","DeliverySchedule")"><i class="fa fa-wrench fa-fw"></i>Đơn giao hàng</a>
+                                <!-- /.nav-second-level -->
+                            </li>
+                            <li>
+                                <a href="@Url.Action("ListDistrict","Staff")"><i class="fa fa-wrench fa-fw"></i>Danh sách khu vực</a>
+                                <!-- /.nav-second-level -->
+                            </li>
+                            @*<li>
+                            <a href="@Url.Action("ListNewRegister","Account")"><i class="fa fa-wrench fa-fw"></i>Xác nhận tài khoản nhà thuốc</a>
+                            <!-- /.nav-second-level -->
+                        </li>*@
+                        
+                            @*<li>
+                            <a href="tables.html"><i class="fa fa-table fa-fw"></i>Report</a>
+                        </li>*@
+                            @*   <li>
+                            <a href="#"><i class="fa fa-sitemap fa-fw"></i>Multi-Level Dropdown<span class="fa arrow"></span></a>
+                            <ul class="nav nav-second-level">
+                                <li>
+                                    <a href="#">Second Level Item</a>
+                                </li>
+                                <li>
+                                    <a href="#">Second Level Item</a>
+                                </li>
+                                <li>
+                                    <a href="#">Third Level <span class="fa arrow"></span></a>
+                                    <ul class="nav nav-third-level">
+                                        <li>
+                                            <a href="#">Third Level Item</a>
+                                        </li>
+                                        <li>
+                                            <a href="#">Third Level Item</a>
+                                        </li>
+                                        <li>
+                                            <a href="#">Third Level Item</a>
+                                        </li>
+                                        <li>
+                                            <a href="#">Third Level Item</a>
+                                        </li>
+                                    </ul>
+                                    <!-- /.nav-third-level -->
+                                </li>
+                            </ul>
+                            <!-- /.nav-second-level -->
+                        </li>*@
+
+                        </ul>
+                    </div>
+                    <!-- /.sidebar-collapse -->
+                </div>
+                <!-- /.navbar-static-side -->
+            </nav>
+
+            <div id="page-wrapper">
+                <div class="row">
+                    <div class="col-lg-12">
+                        @*<h1 class="page-header">Distribution Management</h1>*@
+                    </div>
+                    <!-- /.col-lg-12 -->
+                </div>
+                <!-- /.row -->
+                <div class="row">
+                    <div class="col-lg-12">
+                   
+                        @RenderBody()
+                     
+                    </div>
+                    <!-- /.col-lg-8 -->
+                </div>
+                <!-- /.row -->
+            </div>
+            <!-- /#page-wrapper -->
+        </div>
+    </body>
+</html>
+<script>
+    $(function() {
+        $("[type=number]").keydown(function(e) {
+            // Allow: backspace, delete, tab, escape, enter and .
+            if ($.inArray(e.keyCode, [46, 8, 9, 27, 13, 110, 190]) !== -1 ||
+                // Allow: Ctrl+A, Command+A
+                (e.keyCode == 65 && (e.ctrlKey === true || e.metaKey === true)) ||
+                // Allow: home, end, left, right, down, up
+                (e.keyCode >= 35 && e.keyCode <= 40)) {
+                // let it happen, don't do anything
+                return;
+            }
+            // Ensure that it is a number and stop the keypress
+            if ((e.shiftKey || (e.keyCode < 48 || e.keyCode > 57)) && (e.keyCode < 96 || e.keyCode > 105)) {
+                e.preventDefault();
+            }
+        });
+    });
+</script>
+ <!-- Customizable CSS -->
+<link href="~/assets/css/main.css" rel="stylesheet" />
+<link rel="stylesheet" href="~/assets/css/blue.css">
+<link rel="stylesheet" href="~/assets/css/owl.carousel.css">
+<link rel="stylesheet" href="~/assets/css/owl.transitions.css">
+<link rel="stylesheet" href="~/assets/css/animate.min.css">
+<link href="~/assets/css/Site.css" rel="stylesheet" />
+<script src="~/assets/js/accounting.js"></script>
+<link href="~/assets/css/blue.css" rel="alternate stylesheet" title="Blue color">
+<!--DataTables JavaScript-->
+@*<script src="~/Content/media/js/jquery.js"></script>*@
+<script src="~/Content/media/js/jquery.dataTables.js"></script>
+<script src="~/Content/KeyTable/js/dataTables.keyTable.js"></script>
+<!--DataTables Css-->
+@*    <link href="~/Content/KeyTable/css/dataTables.keyTable.css" rel="stylesheet" />*@
+<link href="~/Content/media/css/jquery.dataTables.css" rel="stylesheet" />
+
+
+<!-- Fonts -->
+<link href='http://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700,800' rel='stylesheet' type='text/css'>
+
+<!-- Icons/Glyphs -->
+<link rel="stylesheet" href="~/assets/css/font-awesome.min.css">
+
+<!-- Favicon -->
+<link rel="shortcut icon" href="~/assets/images/favicon.ico">

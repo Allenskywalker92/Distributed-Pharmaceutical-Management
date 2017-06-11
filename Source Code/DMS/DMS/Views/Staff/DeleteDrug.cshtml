@@ -1,0 +1,37 @@
+﻿@model DMS.DAL.Drug
+@{
+    ViewBag.Title = "Xoá thuốc";
+    Layout = "~/Views/Staff/_LayoutStaff.cshtml";
+}
+<div class="row">
+    <div class="col-lg-8">
+        <div class="panel panel-primary">
+            <div class="panel-heading">
+                @ViewBag.Title
+            </div>
+            <div class="panel-body">
+                <h4>Bạn có muốn xoá thuốc này?</h4>
+
+                <div class="display-field">
+                    <strong>Công ty: </strong>@Html.DisplayFor(model => model.DrugCompany.DrugCompanyName)
+                </div>
+
+                <div class="display-field">
+                    <strong>Loại thuốc: </strong>@Html.DisplayFor(model => model.DrugType.DrugTypeName)
+                </div>
+
+                <div class="display-field">
+                    <strong>Tên thuốc: </strong>@Html.DisplayFor(model => model.DrugName)
+                </div>
+                @using (Html.BeginForm())
+                {
+                    <p>
+                        <input type="submit" class="btn btn-primary" value="Xoá" />
+                        |
+        @Html.ActionLink("Trở về danh sách", "ListDrug")
+                    </p>
+                }
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,128 @@
+﻿@model DMS.DAL.Drug
+@{
+    ViewBag.Title = "Chỉnh sửa chi tiết thuốc";
+    Layout = "~/Views/Staff/_LayoutStaff.cshtml";
+}
+<script src="~/ckeditor/ckeditor.js"></script>
+
+
+<div class="row">
+    <div class="col-lg-12">
+        <div class="panel panel-primary">
+            <div class="panel-heading">
+                @ViewBag.Title
+            </div>
+            <div class="panel-body">
+                @using (Html.BeginForm("EditDrug", "Staff", FormMethod.Post,
+                            new { enctype = "multipart/form-data" }))
+                {
+                    @Html.ValidationSummary(true)
+                    @Html.HiddenFor(model => model.DrugID)
+                    <div class="table-responsive">
+                        <table class="table display KeyTable dataTable" id="TableStations" aria-describedby="example_info">
+                            <tbody>
+                                @*<tr>
+                                    <td>
+                                        <strong>Công ty:</strong>
+                                    </td>
+                                    <td>
+                                        @Html.DropDownList("DrugCompanyID")
+                                    </td>
+                                </tr>*@
+                                <tr>
+                                    <td>
+                                        <strong>Loại thuốc:</strong>
+                                    </td>
+                                    <td>
+                                        @Html.DropDownList("DrugTypeID")
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <strong>Tên thuốc: </strong>
+                                    </td>
+                                    <td>
+                                        @Html.EditorFor(model => model.DrugName)
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <strong>Thông tin chi tiết:</strong>
+                                    </td>
+                                    <td>
+                                        @Html.TextArea("Description", new { @class = "ckeditor", @id = "Description" })
+                                        @*@Html.EditorFor(model => model.Description)*@
+                                    </td>
+                                </tr>
+                               <tr>
+                                    <td>
+                                        <strong>Đơn giá</strong>
+                                    </td>
+                                    <td>
+                                        <input type="text" id="price-package" name="price-package" value="@Model.Prices.Where(p=> p.UnitID == 2).Select(p=> p.UnitPrice).Single()"/> / Thùng
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        
+                                    </td>
+                                    <td>
+                                        <input type="text" id="price-box" name="price-box" value="@Model.Prices.Where(p=> p.UnitID == 1).Select(p=> p.UnitPrice).Single()"/> /Hộp
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <strong>Chiết khấu cho nhà thuốc cỡ lớn</strong>
+                                    </td>
+                                    <td>
+                                        <input type="text" class="input-discount" name="big-discount" value="@Model.DiscountRates.Where(d=> d.DrugstoreTypeID == 1).Select(p=>p.Discount).Single()" /> % 
+                                    </td>
+                                </tr>
+                                 <tr>
+                                    <td>
+                                        <strong>Chiết khấu cho nhà thuốc cỡ vừa</strong>
+                                    </td>
+                                    <td>
+                                        <input type="text" class="input-discount" name="medium-discount" value="@Model.DiscountRates.Where(d=> d.DrugstoreTypeID == 2).Select(p=>p.Discount).Single()"/> % 
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <strong>Chiết khấu cho nhà thuốc cỡ nhỏ</strong>
+                                    </td>
+                                    <td>
+                                        <input type="text" class="input-discount" name="small-discount" value="@Model.DiscountRates.Where(d=> d.DrugstoreTypeID == 3).Select(p=>p.Discount).Single()"/> % 
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <strong>Hình ảnh:</strong>
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(model=> model.ImageUrl)
+                                        <input type="file" name="file" id="file" style="width: 100%;" />
+                                        
+                                    </td>
+                                </tr>
+                               @* <tr>
+                                    <td>
+                                        <strong>Status:</strong>
+                                    </td>
+                                    <td>
+                                        @Html.EditorFor(model => model.IsActive)
+                                    </td>
+                                </tr>*@
+                            </tbody>
+                        </table>
+                    </div>                      
+                    <p>
+                        <input type="submit" class= "btn btn-primary"value="Lưu"/>
+                    </p>                 
+                }
+                <div>
+                    @Html.ActionLink("Trở về danh sách", "Index")
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

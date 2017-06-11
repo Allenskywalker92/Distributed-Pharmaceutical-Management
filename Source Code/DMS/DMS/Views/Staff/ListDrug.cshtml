@@ -1,0 +1,92 @@
+﻿@model IEnumerable<DMS.DAL.Drug>
+@{
+    ViewBag.Title = "Danh sách thuốc";
+    Layout = "~/Views/Staff/_LayoutStaff.cshtml";
+}
+
+<div class="row">
+    <div class="col-lg-12">
+        <div class="panel panel-primary">
+            <div class="panel-heading">
+                @ViewBag.Title
+            </div>
+            <div class="panel-body">
+                <p>
+                    <a href="@Url.Action("CreateDrug", "Staff")" class="btn btn-primary">Tạo mới</a>
+@*                    @Html.ActionLink("Create New", "CreateDrug")*@
+                </p>
+                <div>
+                    <table class="display" id="TableDrug">
+                        <thead>
+                            <tr>
+                                <th>Tên thuốc         </th>
+                                @*<th>Tên công ty        </th>*@
+                                <th>Loại thuốc        </th>
+                                
+                                <th>Giá            </th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model)
+                            {
+                                <tr>
+                                    <td>
+                                        @*@Html.DisplayFor(modelItem => item.DrugName)*@
+                                        @Html.ActionLink(@item.DrugName, "EditDrug", new { id = item.DrugID }) 
+                                    </td>
+                                    @*<td>
+                                        @Html.DisplayFor(modelItem => item.DrugCompany.DrugCompanyName)
+                                    </td>*@
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.DrugType.DrugTypeName)
+                                    </td>
+                                    
+                                    <td>
+                                        @{
+                                            ViewBag.BoxPrice = item.Prices.Where(p => p.UnitID == 1).Select(p => p.UnitPrice).Single();
+                                            ViewBag.PackagePrice = item.Prices.Where(p => p.UnitID == 2).Select(p => p.UnitPrice).Single();
+                                        }
+                                                                          
+                                        
+                                        @* <input type="text" value="@item.Prices.Where(p=> p.UnitID == 1).Select(p=> p.UnitPrice).Single()"/>*@
+                                        
+                                        <div>@string.Format("{0:0 VND}", @ViewBag.BoxPrice).Replace(",", ".")/ Hộp</div>
+                                        <div>@string.Format("{0:0 VND}", @ViewBag.PackagePrice).Replace(",", ".")/ Thùng</div>
+                                    </td>
+                                    
+                                    <td>
+                                        @Html.ActionLink("Xoá", "DeleteDrug", new { id = item.DrugID},new {@class="btn btn-danger"})
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        //var table = $('#TableDrug').DataTable();    
+        //new $.fn.dataTable.KeyTable(table);
+
+        $('#TableDrug').dataTable({
+            "oLanguage": {
+                "sSearch": "Tìm kiếm:",
+                "sLengthMenu": "Hiển thị _MENU_ thuốc",
+                "sInfoEmpty": "Không có dữ liệu",
+                "sZeroRecords": "Không có dữ liệu",
+                "sEmptyTable": "Không có dữ liệu",
+                "sInfo": "Hiển thị _START_ đến _END_ trên _TOTAL_ thuốc",
+                "oPaginate": {
+                    "sNext": "Trang sau",
+                    "sPrevious": "Trang trước"
+                }
+
+            }
+        });
+    });
+</script>

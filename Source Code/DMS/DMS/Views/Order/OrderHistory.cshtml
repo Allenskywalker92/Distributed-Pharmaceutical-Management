@@ -1,0 +1,120 @@
+﻿@using System.Collections
+@using System.Globalization
+@{
+    ViewBag.Title = "OrderHistory";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@model IEnumerable<DMS.DAL.DrugOrder>
+@if (Session["User"] != null)
+{
+    <section id="cart-page">
+        <div class="container">
+            <div id="item-content" class="col-xs-12 col-md-12 items-holder no-margin">
+                <div class="panel panel-primary">
+                    <div class="panel-heading">Danh sách đơn hàng</div>
+                    <div class="panel-body">
+                        <table id="tableOrder" class="table display Keytable dataTable" aria-describedby="example_info">
+                            <thead>
+                                <tr>
+                                    <th>Mã đơn hàng</th>
+                                    <th>Nội dung</th>
+                                    <th>Ngày đặt</th>
+                                    <th>Trạng thái</th>
+                                    <th>Giá tiền</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+
+                                @if (Model != null)
+                                {
+                                    foreach (var item in Model.Reverse())
+                                    {
+                                    <tr>
+                                        <td>@item.DrugOrderID<br />
+                                            <a href="@Url.Action("OrderDetails", "Order", new { orderID = item.DrugOrderID })">Xem đơn hàng</a>
+                                        </td>
+                                        <td>
+                                            @foreach (var orderDetail in item.DrugOrderDetails)
+                                            {
+                                                @orderDetail.Drug.DrugName<br />
+                                            }
+                                        </td>
+                                        <td>@item.DateOrder.Value.ToString("dd/MM/yyyy")</td>
+                                        <td id="status-@item.DrugOrderID">@if (item.Status == 1 || item.Status == 2)
+                                            {
+                                            <p>Chưa được xử lý</p>
+                                            }
+                                            else if (item.Status == 5)
+                                            {
+                                            <p style='color:red'>Đã hủy</p>
+                                            }
+                                            else if (item.Status == 3)
+                                            {
+                                            <p>Đang được xử lý</p>
+                                            }
+                                            else
+                                            {
+                                            <p>Hoàn thành</p>
+                                            }</td>
+                                        <td>@String.Format("{0:0,0}", @item.TotalPrice)</td>
+                                        <td id="delete-@item.DrugOrderID">@if (item.Status == 1 || item.Status == 2)
+                                                                          {
+                                            <a class="btn btn-danger" id="delete" data-id="@item.DrugOrderID">Hủy đơn hàng</a>
+                                                                          }</td>
+                                    </tr>
+                                    }
+                                }
+                            </tbody>
+                        </table>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            //var table = $('#tableOrder').DataTable({
+            //    "order": [[2, "desc"]]
+            //});
+            var table = $('#tablePayment').dataTable({
+                "oLanguage": {
+                    "sSearch": "Tìm kiếm:",
+                    "sLengthMenu": "Hiển thị _MENU_ đơn hàng",
+                    "sInfoEmpty": "Không có dữ liệu",
+                    "sZeroRecords": "Không có dữ liệu",
+                    "sEmptyTable": "Không có dữ liệu",
+                    "sInfo": "Hiển thị _START_ đến _END_ trên _TOTAL_ đơn hàng",
+                    "oAria": {
+                        "sSortDescending": "+",
+                        "sSortAscending": "-",
+                    },
+                    "oPaginate": {
+                        "sNext": "Trang sau",
+                        "sPrevious": "Trang trước"
+                    },
+                }, "order": [[2, "desc"]]
+            });
+            //new $.fn.dataTable.KeyTable(table);
+        });
+        $(document).on("click", "#delete", function () {
+            var recordToUpdate = $(this).attr("data-id");
+            $.ajax({
+                url: '/Order/DeleteOrder',
+                method: 'POST',
+                data: { "orderID": recordToUpdate, }
+            }).done(function (data) {
+                if (data.type=="success") {
+                    $("#delete-" + recordToUpdate).replaceWith("<td></td>");
+                    $("#status-" + recordToUpdate).replaceWith("<td><p style='color:red'>Đã hủy</p></td>");
+                } else {
+                    alert("Bạn không thể hủy đơn hàng này.Vì đơn hàng này đang được xử lý.Vui lòng reload để cập nhật trạng thái.");
+                }
+            }).fail(function (xhr) {
+                alert("TEST");
+            });
+        });
+    </script>
+
+}

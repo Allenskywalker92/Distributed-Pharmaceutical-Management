@@ -1,0 +1,144 @@
+﻿@{
+    ViewBag.Title = "AssignForSaleman";
+    Layout = "~/Views/Staff/_LayoutStaff.cshtml";
+}
+@using DMS.DAL
+@model IEnumerable<DMS.DAL.DrugstoreGroup>
+<div class="row">
+    <div class="col-lg-12 ">
+        <div class="panel panel-primary">
+            <div class="panel-heading">
+                Phân công quản lý cho nhóm nhà thuốc
+            </div>
+            <div class="panel-body">
+                <div class="radio">
+                    <label style="width:200px;font-weight:bold">
+                        <input type="radio" id="automatic_radio" value="automatic" class="radio" name="optradio" checked="">Tự động phân công 
+                    </label>
+                </div>
+                <div class="radio">
+                    <label style="width:200px;font-weight:bold">
+                        <input type="radio" id="manual_radio" value="manual"class="radio" name="optradio">Tùy chỉnh bằng tay
+                    </label>
+                </div>
+                <p>
+                    <a id="submit" class="btn btn-primary">Đồng ý</a>
+                </p>
+                <div class="table-responsive">
+                    <table class="table  KeyTable dataTable" id="TableDrugstore" aria-describedby="example_info">
+                        <thead>
+                            <tr>
+                                <th>Tên nhóm</th>
+                                <th>Tên nhà thuốc</th>
+                                <th>Địa chỉ </th>
+                                <th>Nhân viên tiếp thị</th>
+                            </tr>
+                        </thead>
+                        @{
+                            if (Session["ListDrugstoreGroup"] != null)
+                            {
+                                var listDrugstoreGroups = (List<DrugstoreGroup>)Session["ListDrugstoreGroup"];
+                                var listSalesman = (List<Account>)Session["ListSalesman"];
+                                int count = 0;
+                                foreach (var drugstoreGroup in listDrugstoreGroups)
+                                {
+                            <tbody id="count" style="border: 2px solid black; background-color: red">
+                                <tr rowspan="@drugstoreGroup.Drugstores.Count">
+                                    <td style="vertical-align: middle" rowspan="@drugstoreGroup.Drugstores.Count">Group @drugstoreGroup.DrugstoreGroupID</td>
+                                    <td>@drugstoreGroup.Drugstores.ElementAt(0).DrugstoreName</td>
+                                    <td>@drugstoreGroup.Drugstores.ElementAt(0).Address</td>
+                                    @*<td rowspan="@drugstoreGroup.Drugstores.Count">@if (drugstoreGroup.Account != null)
+                                                                               {@drugstoreGroup.Account.UserName}</td>*@
+                                    <td style="vertical-align: middle" rowspan="@drugstoreGroup.Drugstores.Count">
+                                        <select id="@drugstoreGroup.DrugstoreGroupID" class="form-control" disabled="">
+                                            <option selected="selected" disabled="disabled">Chọn người quản lý</option>
+                                            @for (int i = 0; i < listSalesman.Count; i++)
+                                            {
+                                                <option value="@listSalesman[i].AccountID" >@listSalesman[i].UserName</option>
+                                            }
+                                        </select></td>
+
+                                </tr>
+                                @for (int i = 1; i < drugstoreGroup.Drugstores.Count; i++)
+                                {
+                                    <tr>
+                                        <td>@drugstoreGroup.Drugstores.ElementAt(i).DrugstoreName</td>
+                                        <td>@drugstoreGroup.Drugstores.ElementAt(i).Address</td>
+                                    </tr>
+                                }
+                                <tr>
+                                    @* <td>@drugstoreGroup.Drugstores.ElementAt(i).Drug.DrugName</td>
+                                        <td>@drugstoreGroup.Drugstores.ElementAt(i).Quantity</td>
+                                        <td>@drugstoreGroup.Drugstores.ElementAt(i).Unit.UnitName</td>*@
+                                </tr>
+                            </tbody>
+                                }
+                            }
+                        
+                        }
+                    </table>
+                </div>
+                <br />
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        //var table = $('#TableDrugstore').DataTable();
+        //new $.fn.dataTable.KeyTable(table);
+        var listTbody = $("tbody");
+        for (var i = 0; i < listTbody.length; i++) {
+            if (i % 2 == 0) {
+                $(listTbody[i]).attr("class", "odd");
+            } else {
+                $(listTbody[i]).attr("class", "even");
+            }
+        }
+
+    });
+    $(".radio").click(function () {
+        if ($("input:checked").val() == "manual") {
+            $("select").removeAttr("disabled");
+        } else {
+            $("select").attr("disabled", "true");
+        }
+    });
+    $("select").change(function () {
+        var salemandID = $(this).val();
+        var groupID = $(this).attr("id");
+        $.ajax({
+            url: '/Staff/UpdateGroup',
+            method: 'POST',
+            data: { "drugstoreGroupID": groupID, "salesmanID": salemandID }
+        }).done(function (data) {
+        }).fail(function (xhr) {
+            alert("Fail!!!");
+        });
+    });
+    $("#submit").click(function () {
+        if ($("input:checked").val() == "manual") {
+            $.ajax({
+                url: '/Staff/StepTwo',
+                method: 'POST',
+                data: { "isAutomatic": false }
+            }).done(function (data) {
+                window.location.href = "/Staff/Result";
+            }).fail(function (xhr) {
+                alert("Fail!!!");
+            });
+        } else {
+            $.ajax({
+                url: '/Staff/StepTwo',
+                method: 'POST',
+                data: { "isAutomatic": true }
+            }).done(function (data) {
+                window.location.href = "/Staff/Result";
+            }).fail(function (xhr) {
+                alert("Fail!!!");
+            });
+        }
+    });
+</script>

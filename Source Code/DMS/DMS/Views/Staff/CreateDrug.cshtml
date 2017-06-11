@@ -1,0 +1,131 @@
+﻿@model DMS.DAL.Drug
+
+@{
+    ViewBag.Title = "Thêm thuốc mới";
+    Layout = "~/Views/Staff/_LayoutStaff.cshtml";
+}
+
+<script src="~/ckeditor/ckeditor.js"></script>
+
+<div class="row">
+    <div class="col-lg-12">
+        <div class="panel panel-primary">
+            <div class="panel-heading">
+                @ViewBag.Title
+            </div>
+            <div class="panel-body">
+                @using (Html.BeginForm("CreateDrug", "Staff", FormMethod.Post,
+                            new { enctype = "multipart/form-data" }))
+                {
+                    @Html.ValidationSummary(true)
+                    <div class="table-responsive">
+                        <table class="table display KeyTable dataTable" id="TableStations" aria-describedby="example_info">
+                            <tbody>
+                                @*<tr>
+                                    <td>
+                                        <strong>Công ty:</strong>
+                                    </td>
+                                    <td>
+                                        @Html.DropDownList("DrugCompanyID", "--Chọn--")
+                                    </td>
+                                </tr>*@
+                                <tr>
+                                    <td>
+                                        <strong>Loại thuốc:</strong>
+                                    </td>
+                                    <td>
+                                        @Html.DropDownList("DrugTypeID")
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <strong>Tên thuốc: </strong>
+                                    </td>
+                                    <td>
+                                        @Html.TextBoxFor(model => model.DrugName, new { maxlength = "100",required = "required", @class = "form-control", style = "width:500px" })
+                                        @*@Html.EditorFor(model => model.DrugName, new { maxlength="100"})*@
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <strong>Thông tin chi tiết:</strong>
+                                    </td>
+                                    <td>
+
+                                        @Html.TextArea("Description", new { @class = "ckeditor", required = "required", @id = "Description" })
+@*                                        @Html.ValidationMessageFor(model => model.Description)*@
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <strong>Đơn giá</strong>
+                                    </td>
+                                    <td>
+                                        <input type="number" min="1" max="999999999" maxlength="10" id="price-package" required="required" name="price-package" /> / Thùng
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        
+                                    </td>
+                                    <td>
+                                        <input type="number" min="1" max="999999999" maxlength="10" id="price-box" required="required" name="price-box" /> /Hộp
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <strong>Chiết khấu cho đại lý</strong>
+                                    </td>
+                                    <td>
+                                        <input type="number" min="1" max="99" maxlength="2" class="input-discount" required="required" name="big-discount" /> % 
+                                    </td>
+                                </tr>
+                                 <tr>
+                                    <td>
+                                        <strong>Chiết khấu cho nhà thuốc </strong>
+                                    </td>
+                                    <td>
+                                        <input type="number" min="1" max="99" maxlength="2" class="input-discount" required="required" name="medium-discount" /> % 
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <strong>Chiết khấu cho hiệu thuốc</strong>
+                                    </td>
+                                    <td>
+                                        <input type="number" min="1" max="99" maxlength="2" class="input-discount" required="required" name="small-discount" /> % 
+                                    </td>
+                                </tr>
+                               
+                                <tr>
+                                    <td>
+                                        <strong>Hình ảnh:</strong>
+                                    </td>
+                                    <td>
+                                        <input required="required" type="file" name="file" id="file" style="width: 100%;" />
+                                    </td>
+                                </tr>
+                                @* <tr>
+                                    <td>
+                                        <strong>Status:</strong>
+                                    </td>
+                                    <td>
+                                        @Html.EditorFor(model => model.IsActive)
+                                    </td>
+                                </tr>*@
+                            </tbody>
+                        </table>
+                    </div>
+                    <p>
+                        <input type="submit" class="btn btn-primary" value="Tạo mới" />
+                    </p>
+  
+                }
+
+                <div>
+                    @Html.ActionLink("Trở về danh sách", "ListDrug")
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

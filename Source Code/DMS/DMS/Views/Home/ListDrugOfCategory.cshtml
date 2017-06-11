@@ -1,0 +1,53 @@
+﻿@model IEnumerable<DMS.DAL.Drug>
+@{
+    
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<section id="bestsellers" class="color-bg wow fadeInUp">
+    <div class="container">
+        <h1 class="section-title">@ViewBag.DrugTypeName </h1>
+        <div class="product-grid-holder medium">
+            <div class="col-xs-12 col-md-12 no-margin">
+                <div class="row no-margin">
+                    @if (Model.Count() > 0)
+                    {
+                        foreach (var item in Model)
+                        {
+                        <div class="col-xs-12 col-sm-4 col-md-2 no-margin product-item-holder size-medium hover">
+                            <div class="product-item">
+                                <div class="image">
+                                    @*<img src="~/assets/images/Drugs/300.JPG" />*@
+                                    <img alt="" src="~/assets/images/blank.gif" data-echo="@item.ImageUrl" />
+                                </div>
+                                <div class="body">
+                                    <div class="label-discount clear"></div>
+                                    <div class="title">
+                                        <a href="@Url.Action("DrugDetails", "Drugs", new { id = @item.DrugID })">@item.DrugName</a>
+                                    </div>
+                                    @*<div class="brand">@item.DrugCompany.DrugCompanyName</div>*@
+                                </div>
+                                <div class="prices">
+                                    <div class="price-current text-right">@*@string.Format("{0:0 VND}", item.Prices.ElementAt(1).UnitPrice).Replace(",", ".")*@</div>
+                                </div>
+                                <div class="hover-area">
+                                    <div class="add-cart-button">
+                                        <a href="@Url.Action("DrugDetails", "Drugs", new { id = @item.DrugID })" class="le-button">Xem Chi Tiết</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- /.product-item-holder -->
+                        }
+                    }
+                    else
+                    {
+                        <div>Không Có sản phẩm.</div>
+                    }
+                </div>
+            </div>
+        </div>
+        <!-- /.product-grid-holder -->
+    </div>
+    <!-- /.container -->
+</section>

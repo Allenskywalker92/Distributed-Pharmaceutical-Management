@@ -1,0 +1,144 @@
+﻿@{
+    ViewBag.Title = "PaymentHistory";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@using System.Globalization
+@using DMS.DAL
+@model IEnumerable<DMS.DAL.Payment>
+<link href="~/assets/css/jquery-ui.css" rel="stylesheet" />
+<script src="~/assets/js/jquery-ui.js"></script>
+@if (Session["User"] != null)
+{
+    <section id="cart-page">
+        <div class="container">
+            <div id="item-content" class="col-xs-12  items-holder no-margin">
+                <div class="panel panel-primary">
+                    <div class="panel-heading">Lịch sử thanh toán</div>
+                    <div class="panel-body">
+                        @*<div class="form-inline">
+                            <label for="datepicker">Ngày kết sổ</label>
+                            <input id="datepicker" type="text" class="form-control" />
+                            <input id="UpdatePaymentStatus" type="submit" class="btn btn-primary" value="Kết Sổ" />
+                        </div>*@
+
+                        <br />
+                        <br />
+                        @{
+    double debt = 0;
+    if (Session["Debt"] != null)
+    {
+        debt = (double)Session["Debt"];
+    }
+  
+                                   
+                            <label style="font-size: large">Số nợ hiện tại : <span style="color: red">@String.Format("{0:0,0}", debt) VND</span>
+                            </label>
+                                   
+                        }
+                        <br />
+                        <table class="table display Keytable dataTable" id="tablePayment">
+                            <thead>
+                                <th>Mã số hóa đơn</th>
+                                <th>Số lượng</th>
+                                <th>Loại giao dịch</th>
+                                <th>Cân bằng</th>
+                                <th>Ngày</th>
+                                <th>Người giao dịch</th>
+                                <th>Số điện thoại</th>
+                            </thead>
+                            <tbody>
+                                @{
+    int index = 0;
+    for (int i = Model.Count() - 1; i >= 0; i--)
+    {
+        index++;
+        if (Model.ElementAt(i).PaymentType == true)
+        {
+                                    <tr>
+                                        <td>@Model.ElementAt(i).PaymentID</td>
+                                        <td>
+                                            <label style="margin-left: 10px; color: red">@String.Format("{0:0,0}", @Model.ElementAt(i).Amount) VND</label>
+                                        </td>
+                                        <td>Tiêu xài</td>
+                                        <td>
+                                            <label style="margin-left: 10px; color: red">@String.Format("{0:0,0}", @Model.ElementAt(i).Amount) VND</label>
+                                        </td>
+                                        <td>@Model.ElementAt(i).Date.ToString("yyyy/mm/dd")</td>
+                                        <td>@Model.ElementAt(i).FullName</td>
+                                        <td>@Model.ElementAt(i).PhoneNumber</td>
+                                    </tr>
+        }
+        else
+        {
+                                    <tr>
+                                        <td>@Model.ElementAt(i).PaymentID</td>
+                                        <td>
+                                            <label style="margin-left: 10px; color: blue">@String.Format("{0:0,0}", @Model.ElementAt(i).Amount) VND</label>
+                                        </td>
+                                        <td>Chi trả</td>
+                                        <td>
+                                            <label style="margin-left: 10px; color: red">@String.Format("{0:0,0}", @Model.ElementAt(i).Amount) VND</label>
+                                        </td>
+                                        <td>@Model.ElementAt(i).Date.ToString("yyyy/mm/dd")</td>
+                                        <td>@Model.ElementAt(i).FullName</td>
+                                        <td>@Model.ElementAt(i).PhoneNumber</td>
+                                    </tr>
+        }   
+
+    }
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+}
+<script type="text/javascript">
+    $(function () {
+        $("#datepicker").datepicker();
+    });
+    $(document).ready(function () {
+        //var table = $('#tablePayment').DataTable({
+        //    "order": [[0, "desc"]]
+        //});
+        var table = $('#tablePayment').dataTable({
+            "oLanguage": {
+                "sSearch": "Tìm kiếm:",
+                "sLengthMenu": "Hiển thị _MENU_ thanh toán",
+                "sInfoEmpty": "Không có dữ liệu",
+                "sZeroRecords": "Không có dữ liệu",
+                "sEmptyTable": "Không có dữ liệu",
+                "sInfo": "Hiển thị _START_ đến _END_ trên _TOTAL_ thanh toán",
+                "oAria": {
+                    "sSortDescending": "+",
+                    "sSortAscending": "-",
+                },
+                "oPaginate": {
+                    "sNext": "Trang sau",
+                    "sPrevious": "Trang trước"
+                },
+            }, "order": [[0, "desc"]]
+        });
+    });
+
+    $(document).on("click", "#UpdatePaymentStatus", function () {
+        // Get the id from the link 
+        var date = $("#datepicker").datepicker({ dateFormat: 'mm/dd/yyyy' }).val();;
+        if (date.length > 0) {
+            $.ajax({
+                url: '/Payment/UpdatePaymentStatus',
+                method: 'POST',
+                data: { "date": date }
+            }).done(function (data) {
+                window.location.href = "/Payment/PaymentHistory";
+            }).fail(function (xhr) {
+                alert("Fail!!!");
+            });
+        } else {
+            alert("Xin chọn ngày kết sổ !");
+        }
+    });
+</script>

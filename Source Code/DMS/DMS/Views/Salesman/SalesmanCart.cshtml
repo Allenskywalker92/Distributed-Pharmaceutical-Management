@@ -1,0 +1,388 @@
+﻿@using System.Activities.Statements
+@using System.Data.Entity.Core.Metadata.Edm
+@using DMS.DAL
+@using DMS.Models
+@{
+    ViewBag.Title = "SalesmanCart";
+    Layout = "~/Views/Salesman/_LayoutSalesman.cshtml";
+}
+<link href="~/assets/css/main.css" rel="stylesheet" />
+<link href="~/assets/css/blue.css" rel="stylesheet" />
+<link href="~/assets/css/jquery-ui.css" rel="stylesheet" />
+<script src="~/assets/js/jquery-ui.js"></script>
+<section id="cart-page">
+    <div class="container">
+
+
+
+        @* <div class="col-xs-12 col-md-9 items-holder no-margin">
+            <div class="panel panel-primary">
+                <div class="panel-heading">Tạo đơn hàng</div>
+            </div>
+        </div>*@
+
+        <!-- ========================================= CONTENT ========================================= -->
+        @* <div class="col-xs-12 col-md-9 items-holder no-margin" style="height: 30px">
+            <div class="row no-margin cart-item">
+                <div class="col-xs-12 col-sm-1 no-margin cart-title">
+                    STT
+                </div>
+                <div class="col-xs-12 col-sm-5 no-margin cart-title">
+                    <span>Tên thuốc</span>
+
+                </div>
+                <div class="col-xs-12 col-sm-1 no-margin cart-title">
+                    Số lượng
+                </div>
+                <div class="col-xs-12 col-sm-3 no-margin cart-title">
+                    Giá tiền
+                </div>
+                <div class="col-xs-12 col-sm-1 no-margin cart-title">
+                </div>
+            </div>
+        </div>*@
+        <div id="item-content" class="col-xs-12 col-md-9 items-holder no-margin">
+            <div class="panel panel-primary">
+                <div class="panel-heading">Thêm đơn hàng</div>
+                <div class="panel-body">
+                    <form class="form-horizontal" role="form">
+                        <div class="form-group">
+                            <label class="col-md-2 control-label">Tên thuốc :</label>
+                            <div class="col-md-6">
+                                <input class="form-control input-drug-name" placeholder="Tên loại thuộc bạn muốn thêm vào giỏ hàng" />
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="panel panel-primary">
+                <div class="panel-heading">Chi tiết đơn hàng</div>
+                <div class="panel-body">
+                    @if (Session["Cart"] != null)
+                            {
+                                int quantity = 0;
+                                float totalPrice = 0;
+                                var cartSession = (List<Cart>)Session["Cart"];
+                                var drugstoreTypeID = int.Parse(Session["DrugStoreTypeID"].ToString());
+                                for (int i = 0; i < cartSession.Count; i++)
+                                {
+                                    var price = 0.0;
+                                    quantity = cartSession[i].Quantity + quantity;
+                                    if (cartSession[i].Price != null)
+                                    {
+                                        price = cartSession[i].Price.UnitPrice;
+                                    }
+                                    var actualValue =(100-double.Parse(cartSession[i].Drug.DiscountRates.Where(b => b.DrugstoreTypeID == drugstoreTypeID).Select(d => d.Discount).SingleOrDefault().ToString()))/100;
+                                    totalPrice = (float)(cartSession[i].Quantity * price * actualValue + totalPrice);
+                                }
+                                <label style="font-weight: bold;width: 120px" class="pull-left">Tổng giá tiền :</label><div style="font-weight: bold" class="value pull-left total-price">@String.Format("{0:0,0}", @totalPrice) VND</div>
+                            }
+                            else
+                            {
+                                <label style="font-weight: bold;width: 120px" class="pull-left">Tổng giá tiền :</label><div style="font-weight: bold" class="value pull-left total-price">0 VND</div>
+                            }
+                    <a class="le-button big" style="float:right" href="@Url.Action("CheckOut", "Salesman")">Tạo đơn hàng</a>
+                    <table class="table display Keytable dataTable" aria-describedby="example_info">
+                        <thead>
+                            <tr>
+                                <th>Stt</th>
+                                <th>Tên thuốc</th>
+                                <th>Loại thuốc</th>
+                                @*<th>Hãng</th>*@
+                                <th>Giá</th>
+                                <th>Đơn vị</th>
+                                <th>Số lượng</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (Session["Cart"] != null)
+                            {
+                                var cartSession = (List<Cart>)Session["Cart"];
+                                var drugstoreTypeID = int.Parse(Session["DrugStoreTypeID"].ToString());
+                                int i = 0;
+                                
+                                foreach (var item in cartSession)
+                                {
+                                    i++;
+                                    var discount = double.Parse(item.Drug.DiscountRates.Where(b => b.DrugstoreTypeID == drugstoreTypeID).Select(d => d.Discount).SingleOrDefault().ToString());
+                                    var actualValue = 100 - discount;
+                                    var finalPrice = @item.Price.UnitPrice * actualValue / 100;
+                                    <tr id="@item.Drug.DrugID">
+                                        <td>@i</td>
+                                        <td><a href="@Url.Action("DrugDetails","Drugs",new{id=@item.Drug.DrugID})">@item.Drug.DrugName</a></td>                                 
+                                        @*<td>@item.Drug.DrugCompany.DrugCompanyName</td>*@
+                                        <td>@item.Drug.DrugType.DrugTypeName</td>
+                                        <td>
+                                            <div id="price-@item.Drug.DrugID" class="price-number">
+                                                @String.Format("{0:0,0}", @finalPrice)
+                                            </div>
+                                        </td>
+                                        <td>
+                                            @if (@item.Unit.UnitId == 1)
+                                            {
+                                                <select class="form-control unit-option" data-id="@item.Drug.DrugID" >
+                                                    <option value="2">Thùng</option>
+                                                    <option selected value="1">Hộp</option>
+                                                </select>
+                                            }
+                                            else
+                                            {
+                                                <select class="form-control unit-option" data-id="@item.Drug.DrugID" >
+                                                    <option selected value="2">Thùng</option>
+                                                    <option  value="1">Hộp</option>
+                                                </select>
+                                            }
+
+                                        </td>
+                                        <td style="width: 70px">
+                                            <input type="number" min="1" maxlength="9999" id="input-drug-quantity-@item.Drug.DrugID"  value="@item.Quantity" quantity="@item.Quantity" 
+                                                 style="width: 50px"  class="item-quantity-@item.Drug.DrugID input-drug-quantity form-control drug-quantity-@i" data-id="@item.Drug.DrugID" />
+                                        </td>
+                                        <td><a id="@item.Drug.DrugID" href="#" style="vertical-align: central">Xóa</a></td>
+                                    </tr>
+                                }
+                            }
+                            else
+                            {
+
+                            }
+                        </tbody>
+                    </table>
+
+                </div>
+            </div>
+        </div>
+
+
+        <!-- ========================================= CONTENT : END ========================================= -->
+
+        <!-- ========================================= SIDEBAR ========================================= -->
+
+       
+        <!-- /.sidebar -->
+        @*        <div class="col-xs-12 col-md-9 items-holder no-margin" style="height: 30px">
+            <div class="row no-margin cart-item">
+                <div><a id="add-more-item">Thêm đơn hàng</a></div>
+            </div>
+        </div>*@
+        <!-- ========================================= SIDEBAR : END ========================================= -->
+    </div>
+</section>
+<script>
+    var drugList = [];
+    var priceBlock = ' /<select id="unit" style="border: none">\
+                            <option>Thùng</option>\
+                            <option>Hộp</option>\
+                        </select>';
+
+    var drugNameList = [];
+    var index = 0;
+
+
+    $(function () {
+
+        $.ajax({
+            url: '/Drugs/GetAllDrug',
+            method: 'POST',
+        }).done(function (data) {
+            //var drugList = JSON.parse(data);
+            for (i in data) {
+                drugList[index] = {
+                    drugID: data[i].DrugID,
+                    drugName: data[i].DrugName,
+                    priceBox: data[i].BoxPrice,
+                    pricePackage: data[i].PackagePrice
+                };
+                index++;
+            }
+
+            for (var i = 0; i < drugList.length; i++) {
+                drugNameList[i] = drugList[i].drugName;
+            }
+            $('.input-drug-name').autocomplete({
+                source: drugNameList,
+                select: function (event, ui) { }
+            });
+            $(".input-drug-name").on("autocompleteselect", function (event, ui) {
+                var drugName = ui.item.label;
+                for (var i = 0; i < drugList.length; i++) {
+                    if (drugName == (drugList[i].drugName)) {
+                        var id = $(this).attr("id");
+                        var recordToUpdate = drugList[i].drugID;
+                        $.ajax({
+                            url: '/Salesman/AddToCart',
+                            method: 'POST',
+                            data: { "id": recordToUpdate, "quantity": 1 }
+                        }).done(function (data) {
+                            var index = $('.dataTable tbody tr:last td:first').text();
+                            index++;
+
+                            var newRow = '<tr id="' + data.DrugId + '">\
+                                    <td>'+ index + '</td>\
+                                    <td><a href="/Drugs/DrugDetails/' + data.DrugId + '">' + data.DrugName + '</a></td>\
+                                    <td>' + data.DrugType + '</td>\
+                                    <td> <div id="price-' + data.DrugId + '" class="price-number">\
+                                            ' + accounting.formatMoney((parseFloat(data.Price) * parseFloat(data.ActualValue)), " ", 0) + '\
+                                        </div></td>\
+                                    <td>\
+                                        <select class="form-control unit-option" data-id="' + data.DrugId + '" >\
+                                            <option selected value="2">Thùng</option>\
+                                            <option value="1">Hộp</option>\
+                                        </select></td>\
+                                  <td>\
+                                        <input type="number" min="1" max="9999" id="input-drug-quantity-' + data.DrugId + '"  value="1" quantity="1" \
+                                             style="width: 50px"  class="item-quantity-' + data.DrugId + ' input-drug-quantity form-control drug-quantity' + index + '" data-id="' + data.DrugId + '" />\
+                                    </td>\
+                                        <td><a id="' + data.DrugId + '" href="#" style="vertical-align: central">Xóa</a></td>\
+                                </tr>';
+                            if ($("#" + data.DrugId).length > 0) {
+                                var temp = $("#" + data.DrugId).find(".input-drug-quantity").val();
+                                temp = parseInt(temp) + 1;
+                                $("#" + data.DrugId).find(".input-drug-quantity").val(temp);
+                                $("#" + data.DrugId).find(".input-drug-quantity").attr("quantity", temp);
+                            } else {
+                                $(".dataTable tbody").append(newRow);
+                            }
+                            var totalPrice = parseFloat($('.total-price').first('span').text().split(",").join(""));
+                            totalPrice = parseFloat(data.Price) * parseFloat(data.ActualValue) + totalPrice;
+                            $('.total-price').text(accounting.formatMoney(totalPrice, " ", 0) + " VND");
+
+                        }).fail(function (xhr) {
+                            alert('Không thể thêm sản phẩm này vào giỏ hàng . Xin thử lại !');
+                        });
+                        break;
+                    }
+                }
+            });
+        }).fail(function (xhr) {
+            alert('fails');
+        });
+
+    });
+
+
+
+    $("[type=number]").keydown(function (e) {
+        // Allow: backspace, delete, tab, escape, enter and .
+        if ($.inArray(e.keyCode, [46, 8, 9, 27, 13, 110, 190]) !== -1 ||
+            // Allow: Ctrl+A, Command+A
+            (e.keyCode == 65 && (e.ctrlKey === true || e.metaKey === true)) ||
+            // Allow: home, end, left, right, down, up
+            (e.keyCode >= 35 && e.keyCode <= 40)) {
+            // let it happen, don't do anything
+            return;
+        }
+        // Ensure that it is a number and stop the keypress
+        if ((e.shiftKey || (e.keyCode < 48 || e.keyCode > 57)) && (e.keyCode < 96 || e.keyCode > 105)) {
+            e.preventDefault();
+        }
+    });
+
+
+    $('.unit').on('change', function () {
+        console.log('fuck');
+        $(this).prev().text(this.value);
+    });
+    //function changePrice(el) {
+    //    console.log(el.value);
+    //    //var test=$("#unit").val();
+    //    //$(el).parent(".price").text("FUCK U");
+    //    //el.
+    //    //$(el).prev().text(el.value);
+    //}
+    var temp = $(".id:last").text();
+    $(document).on("change", ".input-drug-quantity", function () {
+        // Get the id from the link 
+        var recordToUpdate = $(this).attr("data-id");
+        var countToUpdate = parseInt($(this).val());
+        var totalPrice = parseFloat($('.total-price').first('span').text().split(",").join(""));
+        var itemPrice = parseFloat($("#price-" + recordToUpdate).text().split(",").join(""));
+        var currentQuantity = parseInt($(".item-quantity-" + recordToUpdate).attr("quantity"));
+        var temp = currentQuantity * itemPrice;
+        if (parseInt(countToUpdate) <= 0) {
+            alert("Số lượng bạn nhập không hợp lệ.Xin vui lòng thử lại!");
+            $(this).val(currentQuantity);
+        }else if (recordToUpdate != '' && parseInt(countToUpdate) < 9999 && $(this).val().length < 4) {
+            $.ajax({
+                url: '/ShoppingCart/UpdateCartCount',
+                method: 'POST',
+                data: { "drugId": recordToUpdate, "cartCount": countToUpdate }
+            }).done(function (data) {
+                totalPrice = totalPrice - temp;
+                var quantity = parseInt($(".basket-item-count").find("span").text());
+                quantity = quantity - parseFloat(currentQuantity);
+                quantity = quantity + data.Quantity;
+                $(".basket-item-count").find("span").text(quantity);
+                totalPrice = parseFloat(data.Price) * parseFloat(data.ActualValue) * parseFloat(countToUpdate) + parseFloat(totalPrice);
+                $('.total-price').first('span').text(accounting.formatMoney(totalPrice, " ", 0) + " VND");
+                $('.total-price-left').first('span').text(accounting.formatMoney(totalPrice, " ", 0) + " VND");
+                $(".item-quantity-" + recordToUpdate).attr("quantity", data.Quantity);
+            }).fail(function (xhr) {
+                alert("TEST");
+            });
+        } else if (parseInt(countToUpdate) > 9999) {
+            alert("Một sản phẩm không được order quá 9999 cái !");
+            $(this).val(currentQuantity);
+        } else {
+            alert("Số lượng bạn nhập không hợp lệ.Xin vui lòng thử lại!");
+            $(this).val(currentQuantity);
+        }
+    });
+    $(document).on("change", ".unit-option", function () {
+        var recordToUpdate = $(this).attr("data-id");
+        var unitID = this.value;
+        var totalPrice = parseFloat($('.total-price').first('span').text().split(",").join(""));
+        var currentQuantity = parseInt($(".item-quantity-" + recordToUpdate).attr("quantity"));
+        var itemPrice = parseFloat($("#price-" + recordToUpdate).text().split(",").join(""));
+        var currentTotalPrice = itemPrice * currentQuantity;
+        $.ajax({
+            url: '/ShoppingCart/UpdateUnit',
+            method: 'POST',
+            data: { "drugID": recordToUpdate, "unitID": unitID }
+        }).done(function (data) {
+            totalPrice = totalPrice - currentTotalPrice;
+            var newItemPrice = data.Price * parseFloat(data.ActualValue);
+            totalPrice = totalPrice + newItemPrice * currentQuantity;
+            $("#price-" + recordToUpdate).text(accounting.formatMoney((data.Price * parseFloat(data.ActualValue)), " ", 0));
+            //var quantity = parseInt($(".basket-item-count").find("span").text());
+            //quantity = quantity - parseFloat(currentQuantity);
+            //quantity = quantity + data.Quantity;
+            //$(".basket-item-count").find("span").text(quantity);
+            //totalPrice = parseFloat(data.Price) * parseInt(countToUpdate) + totalPrice;
+            $('.total-price').first('span').text(accounting.formatMoney(totalPrice, " ", 0) + " VND");
+            $('.total-price-left').first('span').text(accounting.formatMoney(totalPrice, " ", 0) + " VND");
+            //$(".item-quantity-" + recordToUpdate).attr("quantity", data.Quantity);
+        }).fail(function (xhr) {
+            alert("TEST");
+        });
+    });
+    $(document).on("click", "a", function () {
+        var recordToUpdate = $(this).attr("id");
+        var totalPrice = parseFloat($('.total-price').first('span').text().split(",").join(""));
+        var currentQuantity = parseInt($(".item-quantity-" + recordToUpdate).attr("quantity"));
+        var itemPrice = parseFloat($("#price-" + recordToUpdate).text().split(",").join(""));
+        var currentTotalPrice = itemPrice * currentQuantity;
+        $.ajax({
+            url: '/ShoppingCart/RemoveCart',
+            method: 'POST',
+            data: { "drugId": recordToUpdate }
+        }).done(function (data) {
+            totalPrice = totalPrice - currentTotalPrice;
+            //var newItemPrice = data.Price * parseFloat(data.ActualValue);
+            //totalPrice = totalPrice + newItemPrice * currentQuantity;
+            //$("#price-" + recordToUpdate).text(data.Price * parseFloat(data.ActualValue));
+            //var quantity = parseInt($(".basket-item-count").find("span").text());
+            //quantity = quantity - parseFloat(currentQuantity);
+            //quantity = quantity + data.Quantity;
+            //$(".basket-item-count").find("span").text(quantity);
+            //totalPrice = parseFloat(data.Price) * parseInt(countToUpdate) + totalPrice;
+            $('#' + recordToUpdate).remove();
+            $('.total-price').first('span').text(accounting.formatMoney(totalPrice, " ", 0) + " VND");
+            $('.total-price-left').first('span').text(accounting.formatMoney(totalPrice, " ", 0) + " VND");
+            //$(".item-quantity-" + recordToUpdate).attr("quantity", data.Quantity);
+        }).fail(function (xhr) {
+        });
+    });
+</script>
+

@@ -1,0 +1,122 @@
+﻿@{
+    ViewBag.Title = "Tạo phiếu giao hàng";
+    Layout = "~/Views/Staff/_LayoutStaff.cshtml";
+}
+@using DMS.DAL
+@model DMS.DAL.DeliverySchedule
+<script src="~/ckeditor/ckeditor.js"></script>
+
+<div class="row">
+    <div class="col-lg-12">
+        <div class="panel panel-primary">
+            <div class="panel-heading">
+                @ViewBag.Title
+            </div>
+            <div class="panel-body">
+                
+                @{
+                    @Html.ValidationSummary(true)
+                    <div class="table-responsive">
+                        <table class="table display KeyTable dataTable" id="TableStations" aria-describedby="example_info">
+                            <tbody>
+                                <tr>
+                                    <td>
+                                        <strong>Người giao hàng:</strong>
+                                    </td>
+                                    <td>
+                                        @Html.DropDownList("DeliveryManID")
+                                    </td>
+                                </tr>
+                               @* <tr>
+                                    <td>
+                                        <strong>Hạn giao: </strong>
+                                    </td>
+                                    <td>
+                                        <input id="datepicker" type="text" />
+                                    </td>
+                                </tr>*@
+
+                            </tbody>
+                        </table>
+                        <label>Danh sách các đơn đặt hàng</label>
+                        <table id="tableOrder" class="dataTable">
+                            <thead>
+                                <tr>
+                                    <th></th>
+                                    <th>Nhà thuốc</th>
+                                    <th>Địa điểm</th>
+                                    <th>Ngày đặt hàng</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (Session["Order"] != null)
+                                {
+                                    var orderList = (List<DrugOrder>)Session["Order"];
+                                    for (int i = 0; i < orderList.Count; i++)
+                                    {
+                                        var item = orderList.ElementAt(i);
+                                        <tr id="@item.DrugOrderID">
+                                            <td><input id="@item.DrugOrderID" class="checkbox" type="checkbox"/></td>
+                                            <td>@item.Drugstore.DrugstoreName</td>
+                                            <td>@item.Drugstore.Address</td>
+                                            <td>@item.DateOrder</td>
+                                        </tr>
+                                    }
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                    <br/>
+                    <p>
+                        <input id="AddNewSchedule" type="submit" class="btn btn-primary" value="Tạo đơn giao hàng" />
+                    </p>
+  
+                }
+
+                <div>
+                    @Html.ActionLink("Trở về danh sách", "List")
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    
+    $(function () {
+        $("#datepicker").datepicker();
+    });
+    $(document).ready(function () {
+        var table = $('#tableOrder').DataTable({
+            "order": [[3, "desc"]]
+        });
+        //new $.fn.dataTable.KeyTable(table);
+    });
+    $(document).on("click", ".checkbox", function () {
+        var recordToUpdate = $(this).attr("id");
+        $.ajax({
+            url: '/DeliverySchedule/UpdateSessionOrder',
+            method: 'POST',
+            data: { "orderID": recordToUpdate, }
+        }).done(function (data) {
+            
+        }).fail(function (xhr) {
+            alert("TEST");
+        });
+    });
+    $(document).on("click", "#AddNewSchedule", function () {
+        var deliveryManID = $("#DeliveryManID").val();
+        //var dueDate = $("#datepicker").datepicker({ dateFormat: 'mm/dd/yyyy' }).val();;
+        $.ajax({
+            url: '/DeliverySchedule/CreateSchedule',
+            method: 'POST',
+            data: { "deliveryManID": deliveryManID}
+        }).done(function (data) {
+            for (i in data) {
+                $('#'+data[i]).remove();
+            }
+        }).fail(function (xhr) {
+            alert("TEST");
+        });
+    });
+</script>

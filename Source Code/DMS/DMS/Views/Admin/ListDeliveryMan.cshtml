@@ -1,0 +1,117 @@
+﻿@model IEnumerable<DMS.DAL.DeliveryMan>
+<script src="~/Content/js/myModal.js"></script>
+
+<div class="panel-body">
+    <p>
+        @*<a href="@Url.Action("AddDrugstore", "Staff")" class="btn btn-primary">Tạo mới</a>*@
+        @*                    @Html.ActionLink("Create New", "AddDrugstore")*@
+        <a data-toggle="modal" id="" data-target="#myModal3" class="btn btn-primary btn-large" onclick="CreateDelivery()">Tạo mới nhân viên giao hàng</a>
+    </p>
+    <div class="table-responsive">
+        <table class="table display KeyTable dataTable" id="TableDelivery" aria-describedby="example_info">
+            <thead>
+                <tr>
+                    <th>Người giao hàng    </th>
+                    <th>Địa chỉ</th>
+                    <th>Số điện thoại      </th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.FullName)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Address)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Phone)
+                        </td>
+                        <td>
+                            <a data-toggle="modal" data-id="@item.DeliveryManID" data-target="#myModal3" class="btn btn-primary btn-large" onclick="EditDelivery(this)">Chỉnh sửa</a>
+                            @Html.ActionLink("Xoá", "#", new { id = item.DeliveryManID },new{@class="btn btn-danger",style="width:100px"})
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+<div id="myModal3" class="modal fade in" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="false">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h4 class="modal-title">Thông tin nhân viên</h4>
+            </div>
+            <div class="modal-body bodyFix">
+                <div id="modal3">
+                </div>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        //var table = $('#TableDelivery').DataTable();
+        //new $.fn.dataTable.KeyTable(table);
+
+
+        $('#TableDelivery').dataTable({
+            "oLanguage": {
+                "sSearch": "Tìm kiếm:",
+                "sLengthMenu": "Hiển thị _MENU_ nhân viên giao hàng",
+                "sInfoEmpty": "Không có dữ liệu",
+                "sZeroRecords": "Không có dữ liệu",
+                "sEmptyTable": "Không có dữ liệu",
+                "sInfo": "Hiển thị _START_ đến _END_ trên _TOTAL_ nhân viên",
+                "oPaginate": {
+                    "sNext": "Trang sau",
+                    "sPrevious": "Trang trước"
+                }
+
+            }
+        });
+    });
+
+
+    function CreateDelivery() {
+        $.ajax({
+            url: "/Admin/CreateDelivery",
+            type: "Get",
+            success: function (result) {
+                $("#modal3").html(result);
+            }
+        });
+    }
+
+    function EditDelivery(a) {
+        var id = a.getAttribute('data-id');
+        $.ajax({
+            url: "/Admin/EditDelivery",
+            type: "Post",
+            data: {'id':id},
+            success: function (result) {
+                $("#modal3").html(result);
+            }
+        });
+    }
+
+</script>
+<style type="text/css">
+    .bodyFix {
+        height: 100%;
+        overflow: scroll;
+    }
+
+    .modal-title {
+        font-weight: bolder;
+    }
+</style>

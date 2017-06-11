@@ -1,0 +1,106 @@
+﻿@model DMS.DAL.Account
+
+@{
+    Layout = null;
+}
+
+@using (Html.BeginForm())
+{
+    @Html.ValidationSummary(true)
+  
+    <div class="row">
+        <div class="col-md-1">
+        </div>
+        <div>
+            <section class="section register inner-right-xs">
+                <div class="col-md-6">
+                    <h4 style="font-style: oblique; color:blue">***Thông tin tài khoản</h4>
+                    <div class="field-row">
+                        @*<label>Tên tài khoản</label>
+                        <input id="username" type="text" placeholder="tên tài khoản" class="form-control">*@
+                        <label>Địa chỉ email</label>
+                        <input id="email" type="text" class="form-control">
+                    </div>
+                    <!-- /.field-row -->
+                    <div class="field-row">
+                        <label>Mật khẩu</label>
+                        <input id="password" type="password" placeholder="mật khẩu" class="form-control">
+                    </div>
+
+                    <h4 style="font-style:oblique; color:blue"> ***Thông tin cá nhân</h4>
+
+                    <!-- /.field-row -->
+                    <div class="field-row">
+                        <label>Họ và tên</label>
+                        <input id="fullname" type="text" class="form-control">
+                    </div>
+                    <!-- /.field-row -->
+                    <div class="field-row">
+                        <label>Địa chỉ</label>
+                        <input id="address" type="text" class="form-control" onchange="decodeCoordinate()">
+                        <input id="coordinate" type="text" hidden="hidden" />
+                    </div>
+                    <!-- /.field-row -->
+                    @*<div class="field-row">
+                        <label>Địa chỉ email</label>
+                        <input id="email" type="text" class="form-control">
+                    </div>*@
+                    <!-- /.field-row -->
+                    <div class="field-row">
+                        <label>Số điện thoại</label>
+                        <input id="phonenumber" type="text" class="form-control">
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                   
+                </div>
+
+            </section>
+            <!-- /.register -->
+        </div>
+        <!-- /.col -->
+    </div>
+    <!-- /.row -->
+    <div class="row">
+        <br />
+    </div>
+
+    <p>
+        <a class="btn btn-primary" onclick="register()">Tạo mới</a>
+        <button type="button" class="btn btn-info" data-dismiss="modal">Hủy</button>
+    </p>
+}
+
+<script type="text/javascript">
+    function register() {
+        var username = $("#username").val();
+        var password = $("#password").val();
+        var email = $("#email").val();
+        var fullname = $("#fullname").val();
+        var phonenumber = $("#phonenumber").val();
+        var address = $("#address").val();
+        var coordinate = $("#coordinate").val();
+        if (email.length > 0 &&
+       password.length > 0 && fullname.length > 0){
+        $.ajax({
+            url: '/Admin/CreateNewStaff',
+            method: 'POST',
+            data: { "username": username, "password": password, "fullname": fullname, "email": email, "phonenumber": phonenumber, "address": address, "coordinate": coordinate },
+            success: function(result) {
+                window.location.href = "@Url.Action("ListStaff","Admin")";
+            }
+        });
+        }
+    }
+    function decodeCoordinate() {
+        var address = document.getElementById("address").value;
+        $.ajax({
+            url: "http://maps.googleapis.com/maps/api/geocode/json?address=" + address + "&sensor=false",
+            type: "POST",
+            success: function (res) {
+                document.getElementById('coordinate').value = res.results[0].geometry.location.lat + ', ' + res.results[0].geometry.location.lng;
+            }
+        });
+    }
+</script>

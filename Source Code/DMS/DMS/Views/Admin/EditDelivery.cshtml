@@ -1,0 +1,57 @@
+﻿@model DMS.DAL.DeliveryMan
+@{
+    Layout = null;
+}
+
+@using (Html.BeginForm())
+{
+    @Html.ValidationSummary(true)
+
+
+    @Html.HiddenFor(model => model.DeliveryManID)
+
+        
+    <div class="editor-field">
+        <strong>Họ và Tên: </strong>
+        @*@Html.EditorFor(model => model.FullName)
+            @Html.ValidationMessageFor(model => model.FullName)*@
+        <input id="FullName" class="form-control" type="text"  value="@Model.FullName">
+    </div>
+
+       
+    <div class="editor-field">
+        <strong>Địa chỉ: </strong>
+        <input id="Address" class="form-control" type="text"  value="@Model.Address">
+    </div>
+
+       
+    <div class="editor-field">
+        <strong>Điện thoại: </strong>
+        <input id="Phone" class="form-control" type="text"  value="@Model.Phone">
+    </div>
+    <br />
+    <p>
+        <button data-id="@Model.DeliveryManID" type="submit" class="btn btn-primary" onclick="edit(this)">Lưu</button>
+        <button type="button" class="btn btn-info" data-dismiss="modal">Hủy</button>
+    </p>
+}
+
+<script type="text/javascript">
+    function edit(a) {
+        var id = a.getAttribute('data-id');
+        var fullname = $("#FullName").val();
+        var phonenumber = $("#Phone").val();
+        var address = $("#Address").val();
+        $.ajax({
+            url: '/Admin/EditDeli',
+            method: 'POST',
+            data: { "fullname": fullname, "phonenumber": phonenumber, "address": address, "id": id },
+            success: function (result) {
+                window.location.href = '@Url.Action("ManageStaff","Admin")';
+                // $(this).fadeOut("slow");
+            }
+        });
+
+    }
+
+</script>

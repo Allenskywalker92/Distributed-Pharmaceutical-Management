@@ -1,0 +1,68 @@
+﻿@model IEnumerable<DMS.DAL.Drugstore>
+@{
+    ViewBag.Title = "Danh sách nhà thuốc chưa xác thực";
+    Layout = "~/Views/Salesman/_LayoutSalesman.cshtml";
+}
+
+<div class="row">
+    <div class="col-lg-8">
+        <div class="panel panel-primary">
+            <div class="panel-heading">
+                @ViewBag.Title
+            </div>
+            <div class="panel-body">
+                <div class="table-responsive">
+                    <table class="table display KeyTable dataTable" id="TableDrugstore" aria-describedby="example_info">
+                        <thead>
+                            <tr>
+                                <th> Tên nhà thuốc     </th>
+                                <th>Địa chỉ      </th>
+                                @*<th>Quận       </th>*@
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model)
+                            {
+                                <tr>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.DrugstoreName)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.Address)
+                                    </td>
+                                  @*  <td>
+                                        <a href="@Url.Action("VerifyDrugstore", "Salesman", new { id= item.DrugstoreID})" class="btn btn-primary">Xác thực</a>
+                                    </td>*@
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        //var table = $('#TableDrugstore').DataTable();
+        //new $.fn.dataTable.KeyTable(table);
+
+
+        $('#TableDrugstore').dataTable({
+            "oLanguage": {
+                "sSearch": "Tìm kiếm:",
+                "sLengthMenu": "Hiển thị _MENU_ nhà thuốc",
+                "sInfoEmpty": "Không có dữ liệu",
+                "sZeroRecords": "Không có dữ liệu",
+                "sEmptyTable": "Không có dữ liệu",
+                "sInfo": "Hiển thị _START_ đến _END_ trên _TOTAL_ nhà thuốc",
+                "oPaginate": {
+                    "sNext": "Trang sau",
+                    "sPrevious": "Trang trước"
+                }
+
+            }
+        });
+    });
+</script>

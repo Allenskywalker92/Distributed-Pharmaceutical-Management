@@ -1,0 +1,34 @@
+﻿@model DMS.DAL.DrugType
+@{
+    ViewBag.Title = "Xoá loại thuốc";
+    Layout = "~/Views/Staff/_LayoutStaff.cshtml";
+}
+
+<div class="row">
+    <div class="col-lg-8">
+        <div class="panel panel-primary">
+            <div class="panel-heading">
+                @ViewBag.Title
+            </div>
+            <div class="panel-body">
+                <h4>Bạn có muốn xoá loại thuốc này?</h4>
+                <div class="display-field">
+                    <strong>Tên loại thuốc: </strong>
+
+                        @Html.DisplayFor(model => model.DrugTypeName)
+     
+                </div>
+                <br />
+                @using (Html.BeginForm())
+                {
+                    <p>
+                        <input type="submit" class="btn btn-primary" value="Xoá" />
+                        |
+        @Html.ActionLink("Trở về danh sách", "ListCategory")
+                    </p>
+                }
+
+            </div>
+        </div>
+    </div>
+</div>

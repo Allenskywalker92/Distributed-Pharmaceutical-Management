@@ -1,0 +1,118 @@
+﻿@{
+    ViewBag.Title = "Lịch giao hàng";
+  Layout = "~/Views/Staff/_LayoutStaff.cshtml";
+}
+
+@using DMS.DAL
+@model DMS.DAL.DeliverySchedule
+<script src="~/ckeditor/ckeditor.js"></script>
+
+<div class="row">
+    <div class="col-lg-12">
+        <div class="panel panel-primary">
+            <div class="panel-heading">
+                @ViewBag.Title
+            </div>
+            <div class="panel-body">
+                @{
+                    <div class="table-responsive">
+                        <table class="table display KeyTable dataTable" id="TableStations" aria-describedby="example_info">
+                            <tbody>
+                                <tr>
+                                    <td>
+                                        <strong>Người giao hàng:</strong>
+                                    </td>
+                                    <td>
+                                        <label>@Model.DeliveryMan.FullName</label>
+                                    </td>
+                                    <td>
+                                        <strong>Điện thoại:</strong>
+                                    </td>
+                                    <td>
+                                        <label>@Model.DeliveryMan.Phone</label>
+                                    </td>
+                                    <td>
+                                        <strong>Địa chỉ:</strong>
+                                    </td>
+                                    <td>
+                                        <label>@Model.DeliveryMan.Address</label>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <strong>Ngày tạo: </strong>
+                                    </td>
+                                    <td>
+                                        <label>@Model.CreateDate</label>
+                                    </td>
+                                    @*<td>
+                                        <strong>Hạn giao: </strong>
+                                    </td>
+                                    <td>
+                                        <label>@Model.DueDate</label>
+                                    </td>*@
+                                </tr>
+                            </tbody>
+                        </table>
+                        <label>Danh sách các đơn đặt hàng</label>
+                        <table id="tableOrder" class="dataTable  stripe" border="1">
+                            <thead>
+                                <tr>
+                                    <th rowspan="2">Stt</th>
+                                    <th colspan="3">Nội dung</th>
+                                    <th rowspan="2">Số tiền</th>
+                                    <th rowspan="2">Nhà thuốc</th>
+                                    <th rowspan="2">Địa điểm</th>
+                                    <th rowspan="2" style="width: 200px">Ký nhận</th>
+                                </tr>
+                                <tr>
+                                    <th>Tên thuốc</th>
+                                    <th>Số lượng</th>
+                                    <th>Đơn vị</th>
+                                </tr>
+                            </thead>
+                            @{
+                                int count = 0;
+                                foreach (var deliveryDetail in @Model.DeliveryScheduleDetails)
+                                {
+                                    count++;
+                                <tbody>
+                                    <tr rowspan="@deliveryDetail.DrugOrder.DrugOrderDetails.Count">
+                                        <td rowspan="@deliveryDetail.DrugOrder.DrugOrderDetails.Count">@count</td>
+                                        <td>@deliveryDetail.DrugOrder.DrugOrderDetails.ElementAt(0).Drug.DrugName</td>
+                                        <td>@deliveryDetail.DrugOrder.DrugOrderDetails.ElementAt(0).DeliveryQuantity</td>
+                                        <td>@deliveryDetail.DrugOrder.DrugOrderDetails.ElementAt(0).Unit.UnitName</td>
+                                         <td rowspan="@deliveryDetail.DrugOrder.DrugOrderDetails.Count"> @String.Format("{0:0,0}",@deliveryDetail.DrugOrder.TotalPrice) VND</td>
+                                        <td rowspan="@deliveryDetail.DrugOrder.DrugOrderDetails.Count">@deliveryDetail.DrugOrder.Drugstore.DrugstoreName</td>
+                                        <td rowspan="@deliveryDetail.DrugOrder.DrugOrderDetails.Count">@deliveryDetail.DrugOrder.Drugstore.Address</td>
+                                        @*<td rowspan="@deliveryDetail.DrugOrder.DrugOrderDetails.Count">@deliveryDetail.DrugOrder.DateOrder</td>*@
+                                        <td rowspan="@deliveryDetail.DrugOrder.DrugOrderDetails.Count"></td>
+                                    </tr>
+                                    @for (int i = 1; i < deliveryDetail.DrugOrder.DrugOrderDetails.Count; i++)
+                                    {
+                                        <tr>
+                                            <td>@deliveryDetail.DrugOrder.DrugOrderDetails.ElementAt(i).Drug.DrugName</td>
+                                            <td>@deliveryDetail.DrugOrder.DrugOrderDetails.ElementAt(i).Quantity</td>
+                                            <td>@deliveryDetail.DrugOrder.DrugOrderDetails.ElementAt(i).Unit.UnitName</td>
+                                        </tr>
+                                    }
+                                    @*<tr>
+                                        <td colspan="7">---------------------------------------------------------------------------------------------------------------------</td>
+                                    </tr>*@
+                                </tbody>
+                                }
+                            }
+                        </table>
+                    </div>
+                    <br />
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        window.print();
+    });
+</script>

@@ -1,0 +1,67 @@
+﻿@model IEnumerable<DMS.DAL.DrugType>
+
+@*<div class="search-area"></div>
+        <div class="control-group"></div>*@
+@*            <input class="search-field" placeholder="Tìm kiếm thuốc" />
+            <ul class="categories-filter animate-dropdown">
+                <li class="dropdown">
+                    <a class="dropdown-toggle" data-toggle="dropdown">Tất cả thuốc</a>
+                    <ul class="dropdown-menu">
+                        @foreach (var item in Model)
+                        {                        
+                            <li><a href="@Url.Action("ListDrugOfCategory", "Home", new { id = @item.DrugTypeID })" >@item.DrugTypeName</a></li>
+                        }
+                    </ul>
+                </li>
+            </ul>
+            <a class="search-button" href="#"></a>*@
+
+<!-- /.search-area -->
+<div class="search-area">
+    <div>
+        <input id="searchRS" name="search" class="search-field" placeholder="Tìm kiếm thuốc" />
+
+        <ul class="categories-filter animate-dropdown">
+            <li class="dropdown">
+                <a class="dropdown-toggle" data-toggle="dropdown">Tất cả thuốc</a>
+                <ul class="dropdown-menu">
+                    @foreach (var item in Model)
+                    {                        
+                        <li><a href="@Url.Action("ListDrugOfCategory", "Home", new { id = @item.DrugTypeID })" >@item.DrugTypeName</a></li>
+                    }
+                </ul>
+            </li>
+        </ul>
+        @*<input type="button" name="Search" value="Search" class="search-button" onclick="search()"/>*@
+        @* <a class="search-button"  id="a" href='@Url.Action("Search", "Home", new { search= "for"})'></a>*@
+        @*<a class="search-button" href="javascript:search()"></a>*@
+        <a class="search-button" id="btnSearch"></a>
+    </div>
+</div>
+
+
+<script type="text/javascript">
+    $('#btnSearch').click(function (e) {
+        var search = document.getElementById('searchRS').value;
+        location.href = '@Url.Content("~/Home/Search")' + '?search=' + search;
+    });
+
+    function search() {
+        var search = document.getElementsByName('search').value;
+        $.ajax({
+            url: "/Home/Search",
+            method: "POST",
+            data: { 'search': search },
+            success: function (result) {
+            }
+        });
+    }
+
+    function s(target) {
+        var search = document.getElementById('search').value;
+        //var url = target + '?search=' + search;
+        window.location = target + '?search=' + search;
+        // $.post(target, { search: $('#search').val() });
+        //  window.location.href = '/Home/Search/' + search;
+    }
+</script>

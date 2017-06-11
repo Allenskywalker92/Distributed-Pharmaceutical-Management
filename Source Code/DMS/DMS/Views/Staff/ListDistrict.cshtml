@@ -1,0 +1,125 @@
+﻿@model IEnumerable<DMS.DAL.District>
+
+@{
+    ViewBag.Title = "Danh sách các quận";
+    Layout = "~/Views/Staff/_LayoutStaff.cshtml";
+    var salesmanList = (IEnumerable<DMS.DAL.Account>)ViewBag.Salesman;
+    var City = (IEnumerable<DMS.DAL.City>)ViewBag.City;
+    var cityID = (int)ViewBag.CityID;
+}
+<input id="cityID" value="@cityID" type="hidden" />
+<div class="row">
+    <div class="col-lg-12">
+        <div class="panel panel-primary">
+            <div class="panel-heading">
+                @ViewBag.Title
+            </div>
+            <div class="panel-body">
+                <div class="field-row">
+                    <label>Thành phố</label>
+                    @Html.DropDownListFor(modelItem => City.Single().CityName, new SelectList(City, "CityID", "CityName", cityID),
+                        new { @class = "form-control", style = "width:250px", id = "city" })<br />
+                </div>
+                <div>
+                    <table class="display" id="TableDistrict">
+                        <thead>
+                            <tr>
+                                <th>Stt   </th>
+                                <th>Quận    </th>
+                                <th>Nhân viên quản lý    </th>
+                                <th></th>
+                                @*<th>Ghi chú</th>*@
+                                @* <th></th>*@
+                            </tr>
+                        </thead>
+                        <tbody>
+
+                            @if (Model != null)
+                            {
+                                var count = 0;
+                                for (int i = 0; i < Model.Count(); i++)
+                                    //foreach (var item in Model)
+                                {
+                                    count++;
+                                    var item = Model.ElementAt(i);
+                                    <tr>
+                                        <td>
+                                            @count
+                                        </td>
+                                        <td>
+                                            @Html.DisplayFor(modelItem => item.DistrictName)
+                                        </td>
+                                        <td>
+                                            @{
+                                                if (item.Account != null)
+                                                {
+                                                    @Html.DropDownListFor(modelItem => item.Account.Email,
+                                                        new SelectList(salesmanList, "AccountID", "Email", item.Account.AccountID), "---Chọn nhân viên tiếp thị ---",
+                                                        new { @class = "form-control", style = "width:250px", id = "salesman-" + item.DistrictID });
+                                                }
+                                                else
+                                                {
+                                                    @Html.DropDownListFor(modelItem => item.Account.Email,
+                                                        new SelectList(salesmanList, "AccountID", "Email"), "---Chọn nhân viên tiếp thị ---",
+                                                        new { @class = "form-control", style = "width:250px", id = "salesman-" + item.DistrictID });
+                                                }
+                                            }
+                                        </td>
+                                        <td>
+                                            <a id="@item.DistrictID" class="btn btn-success assignSalesman">Lưu</a>
+                                            @*@Html.ActionLink("Save", "AssignSaleman", "Staff", new
+                                                {
+                                                    districtID = @item.DistrictID,
+                                                    salesmanID =@item.Account
+
+                                                },new {@class="btn btn-success"})*@
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                        </tbody>
+
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        //var table = $('#TableDrug').DataTable();
+        //new $.fn.dataTable.KeyTable(table);
+
+        var table = $('#TableDistrict').dataTable({
+            "oLanguage": {
+                "sSearch": "Tìm kiếm:",
+                "sLengthMenu": "Hiển thị _MENU_ quận",
+                "sInfoEmpty": "Không có dữ liệu",
+                "sZeroRecords": "Không có dữ liệu",
+                "sEmptyTable": "Không có dữ liệu",
+                "sInfo": "Hiển thị _START_ đến _END_ trên _TOTAL_ quận",
+                "oAria": {
+                    "sSortDescending": "+",
+                    "sSortAscending": "-",
+                },
+                "oPaginate": {
+                    "sNext": "Trang sau",
+                    "sPrevious": "Trang trước"
+                },
+            }, "order": [[0, "asc"]]
+        });
+
+
+        $(document).on("click",".assignSalesman", function () {
+            var saveLink = "@Url.Action("AssignSaleman", "Staff")";
+            districtID = $(this).attr("id");
+            //var link = saveLink + "?districtID=" + districtID + "&salesmanID=" + $("#salesman-" + districtID).val();
+            window.location.href = saveLink + "?districtID=" + districtID + "&salesmanID=" + $("#salesman-" + districtID).val() + "&cityID=" + $("#cityID").val();
+        });
+        $("#city").on("change", function () {
+            var listDistrict = "@Url.Action("ListDistrict", "Staff")";
+            window.location.href = listDistrict + "?cityID=" + $("#city").val();
+        });
+    });
+</script>

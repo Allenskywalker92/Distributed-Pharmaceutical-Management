@@ -1,0 +1,161 @@
+﻿@model IEnumerable<DMS.DAL.Account>
+<script src="~/Content/js/myModal.js"></script>
+<div class="panel-body">
+    <p>
+        @*        <a href="@Url.Action("AddDrugstore", "Staff")" class="btn btn-primary">Tạo mới</a>*@
+        @*                    @Html.ActionLink("Create New", "AddDrugstore")*@
+        <a data-toggle="modal" id="" data-target="#myModal2" class="btn btn-primary btn-large" onclick="CreateSalesmanAccount()">Tạo mới tài khoản tiếp thị</a>
+    </p>
+    <div class="table-responsive">
+        <table class="table display KeyTable dataTable" id="TableSalesman" aria-describedby="example_info">
+            <thead>
+                <tr>
+                    <th>Tài khoản    </th>
+                    <th>Tên tiếp thị    </th>
+                    <th>Địa chỉ     </th>
+                    <th>Số điện thoại      </th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+               
+                    
+                    <tr>
+                        @*@Html.HiddenFor(modelItem=>item.AccountID)*@
+                        @*  <td>
+                           @Html.DisplayFor(modelItem => item.AccountID)                          
+                        </td>*@
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Email)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.AccountProfile.FullName)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.AccountProfile.Address)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.AccountProfile.Phone)
+                        </td>
+                       
+
+                        <td>
+                            @* @if (item.IsActive == true)
+                           {
+                                @Html.ActionLink("Khoá", "Block", new { id = item.AccountID })
+                           }
+                           else
+                           {
+                                @Html.ActionLink("Mở khoá", "Unblock", new { id = item.AccountID })
+                           }*@
+                            <div id="abc_@item.AccountID">
+                                @if (item.IsActive == true)
+                                {
+                                    <input style="width:100px" class="@item.AccountID btn btn-danger" type="button" value="Khoá" onclick="blocksalesman(this)"/>
+                                }
+                                else
+                                {
+                                    <input style="width:100px" class="@item.AccountID btn btn-primary" type="button" value="Mở Khoá" onclick="unblocksalesman(this)"/>
+                                }
+                            </div>
+
+
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+<div id="myModal2" class="modal fade in" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="false">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h4 class="modal-title">Thông tin tài khoản mới</h4>
+            </div>
+            <div class="modal-body bodyFix">
+                <div id="modal2">
+                </div>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        //var table = $('#TableSalesman').DataTable();
+        //new $.fn.dataTable.KeyTable(table);
+
+
+        $('#TableSalesman').dataTable({
+            "oLanguage": {
+                "sSearch": "Tìm kiếm:",
+                "sLengthMenu": "Hiển thị _MENU_ nhân viên tiếp thị",
+                "sInfoEmpty": "Không có dữ liệu",
+                "sZeroRecords": "Không có dữ liệu",
+                "sEmptyTable": "Không có dữ liệu",
+                "sInfo": "Hiển thị _START_ đến _END_ trên _TOTAL_ nhân viên",
+                "oPaginate": {
+                    "sNext": "Trang sau",
+                    "sPrevious": "Trang trước"
+                }
+
+            }
+        });
+    });
+
+    function blocksalesman(a) {
+        var id = a.getAttribute('class');
+
+        var idGet = id.split(" ")[0];
+        $.ajax({
+            url: '/Admin/Block',
+            method: 'POST',
+            data: { 'id': idGet },
+            success: function (result) {
+                var name = 'abc_' + idGet;
+                document.getElementById(name).innerHTML = "<input class='" + idGet + " btn btn-primary' style='width:100px' type='button' value='Mở Khoá' onclick='unblocksalesman(this)'/>"
+            }
+        });
+    }
+
+    function unblocksalesman(a) {
+        var id = a.getAttribute('class');
+        var idGet = id.split(" ")[0];
+        $.ajax({
+            url: '/Admin/Unblock',
+            method: 'POST',
+            data: { 'id': idGet },
+            success: function (result) {
+                var name = 'abc_' + idGet;
+                document.getElementById(name).innerHTML = "<input class='" + idGet + " btn btn-danger' style='width:100px' type='button' value='Khoá' onclick='blocksalesman(this)'/>"
+            }
+        });
+    }
+
+    function CreateSalesmanAccount() {
+        $.ajax({
+            url: "/Admin/CreateSalesman",
+            type: "Get",
+            success: function (result) {
+                $("#modal2").html(result);
+            }
+        });
+    }
+</script>
+
+<style type="text/css">
+    .bodyFix {
+        height: 100%;
+        overflow: scroll;
+    }
+
+    .modal-title {
+        font-weight: bolder;
+    }
+</style>

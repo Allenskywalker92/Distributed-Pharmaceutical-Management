@@ -1,0 +1,65 @@
+﻿@model DMS.DAL.DeliveryMan
+
+@{
+    Layout = null;
+}
+
+@*@using (Html.BeginForm())
+{
+    @Html.ValidationSummary(true)*@
+  
+    <div class="row">
+        <div class="col-md-1">
+           
+        </div>
+        <div class="col-md-5">
+            <section class="section register inner-right-xs">
+                <!-- /.field-row -->
+                <div class="field-row">
+                    <label>Họ và tên</label>
+                    <input id="fullname" type="text" class="form-control">
+                </div>
+                <!-- /.field-row -->
+                <div class="field-row">
+                    <label>Địa chỉ</label>
+                    <input id="address" type="text" class="form-control">
+                    <input id="coordinate" type="text" hidden="hidden"/>
+                </div>
+                <!-- /.field-row -->
+                <div class="field-row">
+                    <label>Số điện thoại</label>
+                    <input id="phonenumber" type="text" class="form-control">
+                </div>
+            </section>
+            <!-- /.register -->
+        </div>
+        <!-- /.col -->
+    </div>
+    <!-- /.row -->
+    <div class="row">
+        <br />
+    </div>
+
+    <p>
+        @*<button type="submit" class="btn btn-primary" onclick="register()">Tạo mới</button>*@
+        <a  class="btn btn-primary" onclick="register()">Tạo mới</a>
+        <button type="button" class="btn btn-info" data-dismiss="modal">Hủy</button>
+    </p>
+@*}*@
+
+<script type="text/javascript">
+    function register() {
+        var fullname = $("#fullname").val();
+        var phonenumber = $("#phonenumber").val();
+        var address = $("#address").val();
+        $.ajax({
+            url: '/Admin/CreateNewDelivery',
+            method: 'POST',
+            data: {"fullname": fullname, "phonenumber": phonenumber, "address": address},
+            success: function(result) {
+                window.location.href = '@Url.Action("ManageStaff","Admin")';
+            }
+        });
+    }
+  
+</script>

@@ -1,0 +1,95 @@
+﻿@{
+    ViewBag.Title = "List";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="row">
+    <div class="col-lg-12">
+        <div class="panel panel-primary">
+            <div class="panel-heading">
+                Danh sách đơn giao hàng
+            </div>
+            <div class="panel-body">
+                <p>
+                    <a href="@Url.Action("CreateSchedule", "DeliverySchedule")" class="btn btn-primary">Tạo mới</a>
+                </p>
+                <div>
+                    <table class="display" id="TableDrug">
+                        <thead>
+                            <tr>
+                                <th>Stt</th>
+                                <th>Tên danh sách</th>
+                                <th>Ngày tạo</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @{
+                                int i = 1;
+                                foreach (var item in Model)
+                              {
+                                    
+                                <tr id="@item.DeliveryScheduleID">
+                                    <td><a href="@item.DeliveryScheduleID">1</a></td>
+                                    <td>@item.DeliveryMan.FullName</td>
+                                    <td>@item.CreateDate</td>
+                                    <td>@item.DueDate</td>
+                                    <td id="status-@item.DeliveryScheduleID">@if (item.Status == 3)
+                                                                             {
+                                        <p>Chưa hoàn thành</p> 
+                                                                             }
+                                                                             else if (item.Status == 4)
+                                                                             {
+                                        <p>Đã hoàn thành</p>
+                                                                             }
+                                    </td>
+                                    <td id="link-group-@item.DeliveryScheduleID">
+                                        @if (item.Status == 3)
+                                        {
+                                            <p>
+                                                <a id="update-status" data-id="@item.DeliveryScheduleID">Hoàn thành</a>|
+                                                <a id="delete" data-id="@item.DeliveryScheduleID">Xóa</a>
+                                            </p>
+                                        }
+                                    </td>
+                                </tr>
+                              }
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    $(document).ready(function () {
+        var table = $('#TableDrug').DataTable();
+        new $.fn.dataTable.KeyTable(table);
+    });
+    $(document).on("click", "#update-status", function () {
+        var recordToUpdate = $(this).attr("data-id");
+        $.ajax({
+            url: '/DeliverySchedule/UpdateStatus',
+            method: 'POST',
+            data: { "deliveryScheduleID": recordToUpdate, }
+        }).done(function (data) {
+            $("#status-" + recordToUpdate).text("Đã hoàn thành");
+            $("#link-group-" + recordToUpdate).replaceWith("<td></td>");
+        }).fail(function (xhr) {
+            alert("TEST");
+        });
+    });
+    $(document).on("click", "#delete", function () {
+        var recordToUpdate = $(this).attr("data-id");
+        $.ajax({
+            url: '/DeliverySchedule/DeleteSchedule',
+            method: 'POST',
+            data: { "deliveryScheduleID": recordToUpdate, }
+        }).done(function (data) {
+            $("#" + recordToUpdate).remove();
+        }).fail(function (xhr) {
+            alert("TEST");
+        });
+    });
+</script>

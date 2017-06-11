@@ -1,0 +1,103 @@
+﻿@model IEnumerable<DMS.DAL.DrugOrder>
+
+@{
+    ViewBag.Title = "Danh sách yêu cầu chờ xác nhận";
+    Layout = "~/Views/Staff/_LayoutStaff.cshtml";
+}
+<div class="row">
+    <div class="col-lg-12">
+        <div class="panel panel-primary">
+            <div class="panel-heading">
+                @ViewBag.Title
+            </div>
+            <div class="panel-body">
+                <p>
+                    @*<a href="@Url.Action("CreateDrug", "Staff")" class="btn btn-primary">Tạo mới</a>*@
+                    @*                    @Html.ActionLink("Create New", "CreateDrug")*@
+                </p>
+                <div>
+                    <table class="display" id="TableDrug">
+                        <thead>
+                            <tr>
+                                <th>Stt      </th>
+                                <th>Nhà thuốc        </th>
+                                <th>Nội dung      </th>
+                                <th>Ngày yêu cầu</th>
+                                <th>Thành tiền            </th>
+                                @*<th>Ghi chú</th>*@
+                                <th style="width:150px"></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (Model != null)
+                            {
+                                int i = 0;
+                                foreach (var item in Model)
+                                {
+                                    i++;
+                                <tr>
+                                    <td>
+                                        @i
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.Drugstore.DrugstoreName)
+                                    </td>
+                                    <td>
+                                        @foreach (var orderDetail in item.DrugOrderDetails)
+                                        {
+                                            @orderDetail.Drug.DrugName<br />
+                                        }
+                                    </td>
+                                    <td>
+                                        @item.DateOrder.Value.ToString("dd/MM/yyyy")
+                                        @*@Html.DisplayFor(modelItem => item.DateOrder.Value.ToString("dd/mm/yyyy"))*@
+                                    </td>
+                                    <td>
+                                        @*@Html.DisplayFor(modelItem => item.TotalPrice)*@
+                                        <label>@String.Format("{0:0,0}",@item.TotalPrice)</label> VND
+                                    </td>
+                                    @*   <td>
+                                        @Html.DisplayFor(modelItem => item.Note)
+                                    </td>*@
+                                    <td>
+                                        <a style="width: 100px" href="@Url.Action("ReviewOrder", "Staff", new { orderID = item.DrugOrderID })" class="btn btn-success">Xem chi tiết</a>
+                                        @*<a style="width: 75px" href="@Url.Action("ApproveOrder", "Staff", new { id = item.DrugOrderID })" class="btn btn-primary">Xác nhận</a>
+                                        <a style="width: 75px" href="@Url.Action("CancelOrder", "Staff", new { id = item.DrugOrderID })" class="btn btn-danger">Huỷ</a>*@
+                                    </td>
+                                </tr>
+                                }
+                            }
+                        </tbody>
+
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        //var table = $('#TableDrug').DataTable();
+        //new $.fn.dataTable.KeyTable(table);
+
+        $('#TableDrug').dataTable({
+            "oLanguage": {
+                "sSearch": "Tìm kiếm:",
+                "sLengthMenu": "Hiển thị _MENU_ yêu cầu",
+                "sInfoEmpty": "Không có dữ liệu",
+                "sZeroRecords": "Không có dữ liệu",
+                "sEmptyTable": "Không có dữ liệu",
+                "sInfo": "Hiển thị _START_ đến _END_ trên _TOTAL_ yêu cầu",
+                "sSortDescending": "+",
+                "sSortAscending": "-",
+                "oPaginate": {
+                    "sNext": "Trang sau",
+                    "sPrevious": "Trang trước"
+                }
+            },
+             
+    });
+    });
+</script>
+

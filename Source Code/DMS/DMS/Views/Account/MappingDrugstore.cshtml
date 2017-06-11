@@ -1,0 +1,40 @@
+﻿@using DMS.DAL
+@{
+    ViewBag.Title = "MappingDrugstore";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<main id="authentication" class="inner-bottom-md">
+	<div class="container">
+		<div class="row">
+            <div class="col-md-3"></div>
+			<div class="col-md-6">
+			    <section class="section register inner-right-xs">
+			        <form>
+			            @if(Session["RegisterUser"]!=null)
+			            {
+                            var account = (Account)Session["RegisterUser"];
+			            <h2 class="bordered" style="color: red">Thông tin nhà thuốc này đã được đăng ký</h2>
+			            <p>Thông tin nhà thuốc</p>
+			            <div class="field-row">
+			                <label>Tên nhà thuốc</label>
+			                 <input id="drugstore-address" disabled="" value="@account.Drugstore.DrugstoreName"type="text" class="form-control">
+			            </div><!-- /.field-row -->
+			            <div class="field-row">
+			                <label>Địa chỉ nhà thuốc</label>
+                             <input id="drugstore-address"disabled="" value="@account.Drugstore.Address"type="text" class="form-control">
+			            </div><!-- /.field-row -->
+                   <br/>
+			                <div class="buttons-holder">
+			                    <label style="font-size: small;color: gray">Nhấn xác nhận nếu bạn muốn tạo tài khoản cho nhà thuốc này</label>
+			                    <a href="@Url.Action("Mapping","Account")"class="le-button huge" >Xác nhận</a>
+			                </div><!-- /.buttons-holder -->
+               }
+			        </form>
+				</section><!-- /.register -->
+			</div><!-- /.col -->
+
+		</div><!-- /.row -->
+	</div><!-- /.container -->
+</main>

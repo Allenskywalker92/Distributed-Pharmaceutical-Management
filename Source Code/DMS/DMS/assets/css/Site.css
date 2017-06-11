@@ -1,0 +1,35 @@
+﻿.carousel-item {
+    height: 102px!important;
+    width: 150px!important;
+}
+.cart-title {
+    text-align: center;
+}
+.close-btn {
+    margin-top: 20px;
+}
+.price {
+    padding-top: 20px!important;
+    align-content: center;
+}
+.price-number {
+    display: inline-block;
+}
+.unit {
+    border: none;
+}
+.input-discount {
+    width: 100px !important;
+}
+.input-drug-quantity {
+    width: 100px;
+}
+tbody.odd tr {
+    background-color: silver;
+}
+.unit-option {
+    width: 100px!important;
+}
+.input-drug-quantity {
+    width: 75px;
+}

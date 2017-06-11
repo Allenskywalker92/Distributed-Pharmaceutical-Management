@@ -1,0 +1,49 @@
+﻿@model DMS.DAL.Drugstore
+@using (Html.BeginForm())
+{
+    @Html.ValidationSummary(true)
+
+    <div class="table-responsive">
+        <table class="table display KeyTable dataTable"  aria-describedby="example_info">
+            <tbody id="tableDrugstore" data-id="@ViewBag.DrugstoreID">
+                <tr>
+                    <td>
+                        <strong>Loại nhà thuốc:</strong>
+                    </td>
+                    <td>
+                        @Html.DropDownList("DrugstoreTypeID")
+                    </td>
+                </tr>
+                @*<tr>
+                    <td>
+                        <strong>Nhóm nhà thuốc :</strong>
+                    </td>
+                    <td>
+                        @Html.DropDownList("DrugstoreGroupID")
+                    </td>
+                </tr>*@
+            </tbody>
+        </table>
+    </div>
+    <p>
+        <input type="submit" class="btn btn-primary" value="Lưu" onclick="ManageDrugstoreDetails()" />
+    </p>
+}
+
+<script type="text/javascript">
+    function ManageDrugstoreDetails() {
+        var DrugstoreID = $("#tableDrugstore").attr("data-id");
+        var DrugstoreType = document.getElementById('DrugstoreTypeID').value;
+        var DrugstoreGroup = document.getElementById('DrugstoreGroupID').value;
+        $.ajax({
+            url: '/Staff/ManageDrugstore',
+            method: 'POST',
+            data: { "DrugstoreType": DrugstoreType, "DrugstoreGroupID": DrugstoreGroup, "DrugstoreID": DrugstoreID },
+            success: function (result) {
+                //$("#DrugstoreTypeID").val(result.D);
+                //$("#AccountID").val(result.S);
+                window.location.href = "/Staff/DrugstoreDetails/" + DrugstoreID;
+            }
+        });
+    }
+</script>

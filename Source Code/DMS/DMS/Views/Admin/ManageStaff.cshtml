@@ -1,0 +1,45 @@
+﻿@model DMS.DAL.Account
+@{
+    ViewBag.Title = "ManageStaff";
+    Layout = "~/Views/Admin/_LayoutAdmin.cshtml";
+}
+
+<div class="row">
+    <div class="col-lg-12">
+        <div class="panel panel-primary">
+            <div class="panel-heading">
+                Quản lí nhân viên
+            </div>
+            <!-- /.panel-heading -->
+            <div class="panel-body">
+                <!-- Nav tabs -->
+                <ul class="nav nav-tabs">
+                    <li class="active"><a href="#staff" data-toggle="tab">Nhân viên</a>
+                    </li>
+                    <li><a href="#salesman" data-toggle="tab">Tiếp thị</a>
+                    </li>
+                    <li><a href="#delivery" data-toggle="tab">Giao hàng</a>
+                    </li>
+                </ul>
+
+                <!-- Tab panes -->
+                <div class="tab-content">
+                    <div class="tab-pane fade in active" id="staff">
+                        <h4>Danh sách nhân viên</h4>
+                        @Html.Action("ListStaff", "Admin")
+                    </div>
+                    <div class="tab-pane fade" id="salesman">
+                        <h4>Danh sách tiếp thị</h4>
+                        @Html.Action("ListSalesman", "Admin")
+                    </div>
+                    <div class="tab-pane fade" id="delivery">
+                        <h4>Danh sách tiếp thị</h4>
+                        @Html.Action("ListDeliveryMan", "Admin")
+                    </div>
+                </div>
+            </div>
+            <!-- /.panel-body -->
+        </div>
+        <!-- /.panel -->
+    </div>
+</div>
